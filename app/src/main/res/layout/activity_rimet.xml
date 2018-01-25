@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/et_latitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="latitude"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/et_longitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="longitude"
+        android:inputType="numberDecimal" />
+
+    <EditText
+        android:id="@+id/et_lac"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="lac"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/et_cid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="cid"
+        android:inputType="number" />
+
+    <CheckBox
+        android:id="@+id/cb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="open hook" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save" />
+
+</LinearLayout>
