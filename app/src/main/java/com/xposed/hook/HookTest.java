@@ -16,6 +16,7 @@ public class HookTest implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         Log.e(HookUtils.TAG, loadPackageParam.packageName);
+        LuckyMoneyHook.hook(loadPackageParam);
         if (!PkgConfig.packages.contains(loadPackageParam.packageName) && !PkgConfig.pkg_dingding.equals(loadPackageParam.packageName))
             return;
         XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", "location");

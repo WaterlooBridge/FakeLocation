@@ -69,6 +69,9 @@ public class MainActivity extends Activity {
         if (id == R.id.item_dingding) {
             startActivity(new Intent(this, RimetActivity.class));
             return true;
+        } else if (id == R.id.item_luck_money) {
+            startActivity(new Intent(this, LuckMoneySetting.class));
+            return true;
         } else {
             return super.onOptionsItemSelected(item);
         }

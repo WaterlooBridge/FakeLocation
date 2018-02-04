@@ -44,4 +44,14 @@
         android:layout_height="wrap_content"
         android:text="Save" />
 
+    <TextView
+        android:id="@+id/tv_lac"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_cid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
