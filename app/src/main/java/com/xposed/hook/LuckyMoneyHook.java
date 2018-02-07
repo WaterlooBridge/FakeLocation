@@ -10,6 +10,8 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.xposed.hook.wechat.WechatUnrecalledHook;
+
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
@@ -64,8 +66,6 @@ public class LuckyMoneyHook {
                             if (TextUtils.isEmpty(tableName) || !tableName.equals("message")) {
                                 return;
                             }
-                            String content = contentValues.getAsString("content");
-                            XposedBridge.log("wechat msg:" + content);
                             Integer type = contentValues.getAsInteger("type");
                             if (null == type) {
                                 return;
@@ -77,6 +77,8 @@ public class LuckyMoneyHook {
             } catch (Exception e) {
                 Log.e(HookUtils.TAG, e.toString());
             }
+            if(preferences.getBoolean("recalled", false))
+                new WechatUnrecalledHook(WECHAT_PACKAGE_NAME).hook(mLpp.classLoader);
         }
     }
 

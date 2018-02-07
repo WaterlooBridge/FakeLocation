@@ -8,12 +8,18 @@
         android:id="@+id/cb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="open hook" />
+        android:text="quick open" />
 
     <CheckBox
         android:id="@+id/cb2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="auto receive" />
+        android:text="lucky money toast" />
+
+    <CheckBox
+        android:id="@+id/cb3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="recalled"/>
 
 </LinearLayout>

@@ -15,6 +15,7 @@ public class LuckMoneySetting extends Activity {
 
     private CheckBox cb;
     private CheckBox cb2;
+    private CheckBox cb3;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -23,9 +24,11 @@ public class LuckMoneySetting extends Activity {
         setTitle("微信红包");
         cb = (CheckBox) findViewById(R.id.cb);
         cb2 = (CheckBox) findViewById(R.id.cb2);
+        cb3 = (CheckBox) findViewById(R.id.cb3);
         final SharedPreferences sp = getSharedPreferences("lucky_money", MODE_WORLD_READABLE);
         cb.setChecked(sp.getBoolean("quick_open", false));
         cb2.setChecked(sp.getBoolean("auto_receive", false));
+        cb3.setChecked(sp.getBoolean("recalled", false));
         cb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -36,6 +39,12 @@ public class LuckMoneySetting extends Activity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 sp.edit().putBoolean("auto_receive", isChecked).commit();
+            }
+        });
+        cb3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sp.edit().putBoolean("recalled", isChecked).commit();
             }
         });
     }
