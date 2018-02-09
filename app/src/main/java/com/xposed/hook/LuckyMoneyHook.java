@@ -32,6 +32,8 @@ public class LuckyMoneyHook {
 
     public static ToastHandler handler;
 
+    private static long msgId;
+
     public static void hook(final XC_LoadPackage.LoadPackageParam mLpp) {
         if (WECHAT_PACKAGE_NAME.equals(mLpp.packageName)) {
             XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", "lucky_money");
@@ -60,7 +62,7 @@ public class LuckyMoneyHook {
                 if (preferences.getBoolean("auto_receive", false))
                     XposedHelpers.findAndHookMethod("com.tencent.wcdb.database.SQLiteDatabase", mLpp.classLoader, "insert", String.class, String.class, ContentValues.class, new XC_MethodHook() {
                         @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                             ContentValues contentValues = (ContentValues) param.args[2];
                             String tableName = (String) param.args[0];
                             if (TextUtils.isEmpty(tableName) || !tableName.equals("message")) {
@@ -70,6 +72,15 @@ public class LuckyMoneyHook {
                             if (null == type) {
                                 return;
                             }
+                            Long id = contentValues.getAsLong("msgId");
+                            if (id != null) {
+                                if (id <= msgId) {
+                                    id = ++msgId;
+                                    XposedBridge.log("msgId conflict");
+                                }
+                                msgId = id;
+                                contentValues.put("msgId", msgId);
+                            }
                             if (handler != null && (type == 436207665 || type == 469762097))
                                 handler.sendEmptyMessage(0);
                         }
@@ -77,7 +88,7 @@ public class LuckyMoneyHook {
             } catch (Exception e) {
                 Log.e(HookUtils.TAG, e.toString());
             }
-            if(preferences.getBoolean("recalled", false))
+            if (preferences.getBoolean("recalled", false))
                 new WechatUnrecalledHook(WECHAT_PACKAGE_NAME).hook(mLpp.classLoader);
         }
     }

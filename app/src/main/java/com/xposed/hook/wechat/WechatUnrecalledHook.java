@@ -143,8 +143,6 @@ public class WechatUnrecalledHook {
             return;
         }
 
-        XposedBridge.log(xml);
-
         @SuppressWarnings("unchecked") Map<String, String> map =
                 (Map<String, String>) param.getResult();
         if (map == null)

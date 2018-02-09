@@ -63,7 +63,7 @@ public class WechatMainDBHelper {
         long msgSvrId = createTime + (new Random().nextInt());
         long msgId = getNextMsgId();
         ContentValues v = new ContentValues();
-        v.put("msgid", msgId);
+        v.put("msgId", msgId);
         v.put("msgSvrid", msgSvrId);
         v.put("type", type);
         v.put("status", status);
