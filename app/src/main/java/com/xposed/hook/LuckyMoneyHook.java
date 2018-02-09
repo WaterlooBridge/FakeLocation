@@ -74,12 +74,9 @@ public class LuckyMoneyHook {
                             }
                             Long id = contentValues.getAsLong("msgId");
                             if (id != null) {
-                                if (id <= msgId) {
-                                    id = ++msgId;
-                                    XposedBridge.log("msgId conflict");
-                                }
+                                if (id == msgId)
+                                    XposedBridge.log(contentValues.getAsString("content"));
                                 msgId = id;
-                                contentValues.put("msgId", msgId);
                             }
                             if (handler != null && (type == 436207665 || type == 469762097))
                                 handler.sendEmptyMessage(0);
