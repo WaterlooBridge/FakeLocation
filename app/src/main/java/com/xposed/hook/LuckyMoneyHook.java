@@ -75,7 +75,7 @@ public class LuckyMoneyHook {
                             Long id = contentValues.getAsLong("msgId");
                             if (id != null) {
                                 if (id == msgId)
-                                    XposedBridge.log(contentValues.getAsString("content"));
+                                    XposedBridge.log("wechat msg:" + contentValues.getAsString("content"));
                                 msgId = id;
                             }
                             if (handler != null && (type == 436207665 || type == 469762097))
@@ -83,7 +83,7 @@ public class LuckyMoneyHook {
                         }
                     });
             } catch (Exception e) {
-                Log.e(HookUtils.TAG, e.toString());
+                XposedBridge.log(e);
             }
             if (preferences.getBoolean("recalled", false))
                 new WechatUnrecalledHook(WECHAT_PACKAGE_NAME).hook(mLpp.classLoader);

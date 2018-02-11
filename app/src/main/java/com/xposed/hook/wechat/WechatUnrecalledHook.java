@@ -10,6 +10,7 @@ import java.util.Map;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
@@ -28,6 +29,7 @@ public class WechatUnrecalledHook {
 
     protected boolean mDebug = true;
     protected WechatMainDBHelper mDb;
+    protected Object mObject;
 
     Map<String, Boolean> mSettings = new HashMap<>();
 
@@ -72,6 +74,11 @@ public class WechatUnrecalledHook {
         }
         try {
             hookDbObject(loader);
+        } catch (Throwable t) {
+            XposedBridge.log(t);
+        }
+        try {
+            hookMsgLocalId(loader);
         } catch (Throwable t) {
             XposedBridge.log(t);
         }
@@ -135,6 +142,16 @@ public class WechatUnrecalledHook {
                 });
     }
 
+    protected void hookMsgLocalId(ClassLoader loader) {
+        findAndHookMethod("com.tencent.mm.storage.av", loader, "Xz", String.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if ("message".equals(param.args[0]))
+                    mObject = param.getResult();
+            }
+        });
+    }
+
     protected void preventMsgRecall(XC_MethodHook.MethodHookParam param) {
         String xml = (String) param.args[0];
         String tag = (String) param.args[1];
@@ -183,10 +200,18 @@ public class WechatUnrecalledHook {
             }
             cursor.close();
             mDb.insertSystemMessage(talker, talkerId, replacemsg, createTime + 1);
+            updateMessageCount();
         } catch (Throwable t) {
             XposedBridge.log(t);
         }
 
+    }
+
+    protected void updateMessageCount() {
+        if (mObject != null) {
+            XposedHelpers.callMethod(mObject, "aZw");
+            XposedBridge.log("updateMessageCount");
+        }
     }
 
     public void preventCommentRecall(XC_MethodHook.MethodHookParam param) {
