@@ -54,4 +54,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:id="@+id/btn_auto_fill"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Auto Fill"
+        android:visibility="gone" />
+
 </LinearLayout>

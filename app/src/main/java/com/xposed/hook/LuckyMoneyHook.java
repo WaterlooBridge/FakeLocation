@@ -28,7 +28,7 @@ public class LuckyMoneyHook {
 
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyReceiveUI";
     public static final String receiveUIFunctionName = "d";
-    public static final String receiveUIParamName = "com.tencent.mm.ae.k";
+    public static final String receiveUIParamName = "com.tencent.mm.ad.k";
 
     public static ToastHandler handler;
 
@@ -60,7 +60,7 @@ public class LuckyMoneyHook {
                         }
                     });
                 if (preferences.getBoolean("auto_receive", false))
-                    XposedHelpers.findAndHookMethod("com.tencent.wcdb.database.SQLiteDatabase", mLpp.classLoader, "insert", String.class, String.class, ContentValues.class, new XC_MethodHook() {
+                    XposedHelpers.findAndHookMethod(WechatUnrecalledHook.SQLiteDatabaseClass, mLpp.classLoader, "insert", String.class, String.class, ContentValues.class, new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                             ContentValues contentValues = (ContentValues) param.args[2];

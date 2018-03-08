@@ -15,6 +15,7 @@ import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,8 +31,10 @@ public class RimetActivity extends Activity {
     private CheckBox cb;
     private TextView tvLac;
     private TextView tvCid;
+    private Button btnAutoFill;
 
     TelephonyManager tm;
+    GsmCellLocation l;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +49,16 @@ public class RimetActivity extends Activity {
         cb = (CheckBox) findViewById(R.id.cb);
         tvLac = (TextView) findViewById(R.id.tv_lac);
         tvCid = (TextView) findViewById(R.id.tv_cid);
+        btnAutoFill = (Button) findViewById(R.id.btn_auto_fill);
         sp = getSharedPreferences("location", MODE_WORLD_READABLE);
         etLatitude.setText(sp.getString("dingding_latitude", "34.752600"));
         etLongitude.setText(sp.getString("dingding_longitude", "113.662000"));
-        etLac.setText(String.valueOf(sp.getInt("dingding_lac", -1)));
-        etCid.setText(String.valueOf(sp.getInt("dingding_cid", -1)));
+        int lac = sp.getInt("dingding_lac", -1);
+        int cid = sp.getInt("dingding_cid", -1);
+        if (lac != -1)
+            etLac.setText(String.valueOf(lac));
+        if (cid != -1)
+            etCid.setText(String.valueOf(cid));
         cb.setChecked(sp.getBoolean(PkgConfig.pkg_dingding, false));
         findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,6 +70,13 @@ public class RimetActivity extends Activity {
                         .putBoolean(PkgConfig.pkg_dingding, cb.isChecked())
                         .commit();
                 finish();
+            }
+        });
+        btnAutoFill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                etLac.setText(String.valueOf(l.getLac()));
+                etCid.setText(String.valueOf(l.getCid()));
             }
         });
         requestPermissions();
@@ -86,9 +101,10 @@ public class RimetActivity extends Activity {
         @Override
         public void onCellLocationChanged(CellLocation location) {
             if (location instanceof GsmCellLocation) {
-                GsmCellLocation l = (GsmCellLocation) location;
+                l = (GsmCellLocation) location;
                 tvLac.setText("Current Lac:" + l.getLac());
                 tvCid.setText("Current Cid:" + l.getCid());
+                btnAutoFill.setVisibility(View.VISIBLE);
             }
         }
     };

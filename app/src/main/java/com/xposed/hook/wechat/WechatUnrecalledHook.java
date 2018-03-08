@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.text.TextUtils;
 
+import com.xposed.hook.LuckyMoneyHook;
+
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,11 +23,14 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class WechatUnrecalledHook {
 
-    public static String recallClass;
+    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bj";
     public static String recallMethod = "y";
     public static String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
-    public static String storageClass1;
-    public static String storageMethod1;
+    public static String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.r";
+    public static String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
+    public static String incMsgLocalIdClass = "com.tencent.mm.storage.av";
+    public static String incMsgLocalIdMethod = "Yg";
+    public static String updateMsgLocalIdMethod = "bac";
 
     protected boolean mDebug = true;
     protected WechatMainDBHelper mDb;
@@ -34,9 +39,6 @@ public class WechatUnrecalledHook {
     Map<String, Boolean> mSettings = new HashMap<>();
 
     public WechatUnrecalledHook(String packageName) {
-        recallClass = packageName + ".sdk.platformtools." + "bi";
-        storageClass1 = packageName + ".storage." + "r";
-        storageMethod1 = packageName + ".sdk.e." + "e";
         mSettings.put("prevent_moments_recall", true);
         mSettings.put("prevent_comments_recall", true);
     }
@@ -126,8 +128,8 @@ public class WechatUnrecalledHook {
 
     protected void hookDbObject(final ClassLoader loader) {
         // get database object
-        findAndHookConstructor(storageClass1, loader,
-                storageMethod1, new XC_MethodHook() {
+        findAndHookConstructor(storageClass, loader,
+                storageMethodParam, new XC_MethodHook() {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         // look for: LinkedBlockingQueue
@@ -143,7 +145,7 @@ public class WechatUnrecalledHook {
     }
 
     protected void hookMsgLocalId(ClassLoader loader) {
-        findAndHookMethod("com.tencent.mm.storage.av", loader, "Xz", String.class, new XC_MethodHook() {
+        findAndHookMethod(incMsgLocalIdClass, loader, incMsgLocalIdMethod, String.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 if ("message".equals(param.args[0]))
@@ -209,7 +211,7 @@ public class WechatUnrecalledHook {
 
     protected void updateMessageCount() {
         if (mObject != null) {
-            XposedHelpers.callMethod(mObject, "aZw");
+            XposedHelpers.callMethod(mObject, updateMsgLocalIdMethod);
             XposedBridge.log("updateMessageCount");
         }
     }
