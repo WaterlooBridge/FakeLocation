@@ -98,7 +98,7 @@ public class HookUtils {
             }
         });
 
-        hook_method("android.location.LocationManager", mLpp.classLoader, "getLastKnownLocation", new XC_MethodHook() {
+        hook_methods("android.location.LocationManager", "getLastKnownLocation", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 Location l = (Location) param.getResult();
