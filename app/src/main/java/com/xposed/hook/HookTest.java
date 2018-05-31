@@ -1,6 +1,5 @@
 package com.xposed.hook;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -22,8 +21,8 @@ public class HookTest implements IXposedHookLoadPackage {
         XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", "location");
         if (preferences.getBoolean(loadPackageParam.packageName, false)) {
             if (PkgConfig.pkg_dingding.equals(loadPackageParam.packageName)) {
-                double latitude = Double.parseDouble(preferences.getString("dingding_latitude", "34.752600"));
-                double longitude = Double.parseDouble(preferences.getString("dingding_longitude", "113.662000"));
+                double latitude = Double.parseDouble(preferences.getString("dingding_latitude", "0"));
+                double longitude = Double.parseDouble(preferences.getString("dingding_longitude", "0"));
                 int lac = preferences.getInt("dingding_lac", -1);
                 int cid = preferences.getInt("dingding_cid", -1);
                 HookUtils.HookAndChange(loadPackageParam, latitude, longitude, lac, cid);

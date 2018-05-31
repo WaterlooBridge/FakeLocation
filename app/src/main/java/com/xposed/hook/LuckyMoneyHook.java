@@ -28,7 +28,7 @@ public class LuckyMoneyHook {
 
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyReceiveUI";
     public static final String receiveUIFunctionName = "d";
-    public static final String receiveUIParamName = "com.tencent.mm.ac.l";
+    public static final String receiveUIParamName = "com.tencent.mm.ab.l";
 
     public static ToastHandler handler;
 

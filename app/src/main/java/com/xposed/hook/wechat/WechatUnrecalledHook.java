@@ -23,14 +23,14 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class WechatUnrecalledHook {
 
-    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bk";
+    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bl";
     public static String recallMethod = "z";
     public static String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
-    public static String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.g";
+    public static String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.v";
     public static String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
-    public static String incMsgLocalIdClass = "com.tencent.mm.storage.ba";
-    public static String incMsgLocalIdMethod = "YX";
-    public static String updateMsgLocalIdMethod = "bdb";
+    public static String incMsgLocalIdClass = "com.tencent.mm.storage.be";
+    public static String incMsgLocalIdMethod = "Zd";
+    public static String updateMsgLocalIdMethod = "bdn";
 
     protected boolean mDebug = true;
     protected WechatMainDBHelper mDb;

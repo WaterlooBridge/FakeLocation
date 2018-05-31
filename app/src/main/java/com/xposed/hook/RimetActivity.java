@@ -13,7 +13,6 @@ import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -51,8 +50,8 @@ public class RimetActivity extends Activity {
         tvCid = (TextView) findViewById(R.id.tv_cid);
         btnAutoFill = (Button) findViewById(R.id.btn_auto_fill);
         sp = getSharedPreferences("location", MODE_WORLD_READABLE);
-        etLatitude.setText(sp.getString("dingding_latitude", "34.752600"));
-        etLongitude.setText(sp.getString("dingding_longitude", "113.662000"));
+        etLatitude.setText(sp.getString("dingding_latitude", "0"));
+        etLongitude.setText(sp.getString("dingding_longitude", "0"));
         int lac = sp.getInt("dingding_lac", -1);
         int cid = sp.getInt("dingding_cid", -1);
         if (lac != -1)
