@@ -3,6 +3,7 @@ package com.xposed.hook.wechat;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.xposed.hook.LuckyMoneyHook;
 
@@ -23,14 +24,14 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class WechatUnrecalledHook {
 
-    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bl";
-    public static String recallMethod = "z";
+    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bm";
+    public static String recallMethod = "r";
     public static String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
     public static String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.v";
     public static String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
-    public static String incMsgLocalIdClass = "com.tencent.mm.storage.be";
-    public static String incMsgLocalIdMethod = "Zd";
-    public static String updateMsgLocalIdMethod = "bdn";
+    public static String incMsgLocalIdClass = "com.tencent.mm.storage.bh";
+    public static String incMsgLocalIdMethod = "aaO";
+    public static String updateMsgLocalIdMethod = "bed";
 
     protected boolean mDebug = true;
     protected WechatMainDBHelper mDb;
@@ -123,7 +124,25 @@ public class WechatUnrecalledHook {
                     }
                 });
 
+    }
 
+    public static void hook3DaysMoments(ClassLoader loader) {
+        findAndHookMethod(SQLiteDatabaseClass, loader, "rawQueryWithFactory",
+                SQLiteDatabaseClass + ".CursorFactory", String.class, String[].class, String.class, "com.tencent.wcdb.support.CancellationSignal",
+                new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        Log.e("rawQueryWithFactory", param.args[1] + ":" + param.args[3]);
+                        if (param.args[1] != null && param.args[1].toString().contains("from SnsInfo") &&
+                                param.args[1].toString().contains("sourceType in (8,10,12,14)") &&
+                                param.args[1].toString().contains("type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26)")) {
+                            param.args[1] = param.args[1].toString().replace("sourceType in (8,10,12,14)", "1=1")
+                                    .replace("type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26)", "1=1")
+                                    .replace("snsId >=", "0 !=");
+                        }
+                    }
+
+                });
     }
 
     protected void hookDbObject(final ClassLoader loader) {

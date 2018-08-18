@@ -27,8 +27,8 @@ public class LuckyMoneyHook {
     public static final String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyReceiveUI";
-    public static final String receiveUIFunctionName = "d";
-    public static final String receiveUIParamName = "com.tencent.mm.ab.l";
+    public static final String receiveUIFunctionName = "c";
+    public static final String receiveUIParamName = "com.tencent.mm.af.m";
 
     public static ToastHandler handler;
 
@@ -45,7 +45,7 @@ public class LuckyMoneyHook {
                         handler = new ToastHandler(context);
                     }
                 });
-                if (preferences.getBoolean("quick_open", false))
+                if (preferences.getBoolean("quick_open", true))
                     XposedHelpers.findAndHookMethod(luckyMoneyReceiveUI, mLpp.classLoader, receiveUIFunctionName, int.class, int.class, String.class, receiveUIParamName, new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -59,7 +59,7 @@ public class LuckyMoneyHook {
                             }
                         }
                     });
-                if (preferences.getBoolean("auto_receive", false))
+                if (preferences.getBoolean("auto_receive", true))
                     XposedHelpers.findAndHookMethod(WechatUnrecalledHook.SQLiteDatabaseClass, mLpp.classLoader, "insert", String.class, String.class, ContentValues.class, new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -85,8 +85,10 @@ public class LuckyMoneyHook {
             } catch (Exception e) {
                 XposedBridge.log(e);
             }
-            if (preferences.getBoolean("recalled", false))
+            if (preferences.getBoolean("recalled", true))
                 new WechatUnrecalledHook(WECHAT_PACKAGE_NAME).hook(mLpp.classLoader);
+            if (preferences.getBoolean("3_days_Moments", false))
+                WechatUnrecalledHook.hook3DaysMoments(mLpp.classLoader);
         }
     }
 

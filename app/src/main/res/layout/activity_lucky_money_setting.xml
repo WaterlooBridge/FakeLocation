@@ -8,18 +8,24 @@
         android:id="@+id/cb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="quick open" />
+        android:text="quick open lucky money" />
 
     <CheckBox
         android:id="@+id/cb2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="lucky money toast" />
+        android:text="show lucky money coming toast" />
 
     <CheckBox
         android:id="@+id/cb3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="recalled"/>
+        android:text="prevent message recalled"/>
+
+    <CheckBox
+        android:id="@+id/cb4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="disable 3 days of Moments limit"/>
 
 </LinearLayout>
