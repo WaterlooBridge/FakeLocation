@@ -1,7 +1,10 @@
 package com.xposed.hook;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -10,7 +13,13 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.xposed.hook.utils.XmlToJson;
 import com.xposed.hook.wechat.WechatUnrecalledHook;
+
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
+import java.util.HashSet;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
@@ -29,6 +38,14 @@ public class LuckyMoneyHook {
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyReceiveUI";
     public static final String receiveUIFunctionName = "c";
     public static final String receiveUIParamName = "com.tencent.mm.af.m";
+
+    public static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
+    public static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
+    public static final String openUIClass = WECHAT_PACKAGE_NAME + ".bm.d";
+    public static final String openUIMethodName = "b";
+
+    public static HashSet<String> autoReceiveIds = new HashSet<>();
+    public static WeakReference<Activity> launcherUiActivity;
 
     public static ToastHandler handler;
 
@@ -59,7 +76,7 @@ public class LuckyMoneyHook {
                             }
                         }
                     });
-                if (preferences.getBoolean("auto_receive", true))
+                if (preferences.getBoolean("auto_receive", true)) {
                     XposedHelpers.findAndHookMethod(WechatUnrecalledHook.SQLiteDatabaseClass, mLpp.classLoader, "insert", String.class, String.class, ContentValues.class, new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -78,10 +95,35 @@ public class LuckyMoneyHook {
                                     XposedBridge.log("wechat msg:" + contentValues.getAsString("content"));
                                 msgId = id;
                             }
-                            if (handler != null && (type == 436207665 || type == 469762097))
-                                handler.sendEmptyMessage(0);
+                            if (handler != null && (type == 436207665 || type == 469762097)) {
+                                handler.obtainMessage(0, "Lucky Money is Coming").sendToTarget();
+                                openLuckyMoneyReceiveUI(contentValues, mLpp);
+                            }
                         }
                     });
+                    XposedHelpers.findAndHookMethod(chatRoomInfoUI, mLpp.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            if (handler != null) {
+                                Activity activity = (Activity) param.thisObject;
+                                String wechatId = activity.getIntent().getStringExtra("RoomInfo_Id");
+                                String status = "Opened";
+                                if (autoReceiveIds.contains(wechatId)) {
+                                    autoReceiveIds.remove(wechatId);
+                                    status = "Closed";
+                                } else
+                                    autoReceiveIds.add(wechatId);
+                                handler.obtainMessage(0, "Group Chat ID:" + wechatId + ",Auto Open LuckyMoneyReceiveUI " + status).sendToTarget();
+                            }
+                        }
+                    });
+                    XposedHelpers.findAndHookMethod(launcherUI, mLpp.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
+                        @Override
+                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            launcherUiActivity = new WeakReference<>((Activity) param.thisObject);
+                        }
+                    });
+                }
             } catch (Exception e) {
                 XposedBridge.log(e);
             }
@@ -89,6 +131,36 @@ public class LuckyMoneyHook {
                 new WechatUnrecalledHook(WECHAT_PACKAGE_NAME).hook(mLpp.classLoader);
             if (preferences.getBoolean("3_days_Moments", false))
                 WechatUnrecalledHook.hook3DaysMoments(mLpp.classLoader);
+        }
+    }
+
+    private static void openLuckyMoneyReceiveUI(ContentValues contentValues, XC_LoadPackage.LoadPackageParam lpparam) {
+        int status = contentValues.getAsInteger("status");
+        if (status == 4)
+            return;
+
+        String talker = contentValues.getAsString("talker");
+        if (!autoReceiveIds.contains(talker))
+            return;
+
+        String content = contentValues.getAsString("content");
+        if (!content.startsWith("<msg"))
+            content = content.substring(content.indexOf("<msg"));
+        try {
+            JSONObject wcpayinfo = new XmlToJson.Builder(content).build()
+                    .getJSONObject("msg").getJSONObject("appmsg").getJSONObject("wcpayinfo");
+            String nativeUrlString = wcpayinfo.getString("nativeurl");
+
+            if (launcherUiActivity != null && launcherUiActivity.get() != null) {
+                Intent param = new Intent();
+                param.putExtra("key_way", 1);
+                param.putExtra("key_native_url", nativeUrlString);
+                param.putExtra("key_username", talker);
+                XposedHelpers.callStaticMethod(XposedHelpers.findClass(openUIClass, lpparam.classLoader),
+                        openUIMethodName, launcherUiActivity.get(), "luckymoney", ".ui.LuckyMoneyReceiveUI", param);
+            }
+        } catch (Exception e) {
+            XposedBridge.log(e);
         }
     }
 
@@ -103,7 +175,7 @@ public class LuckyMoneyHook {
 
         @Override
         public void handleMessage(Message msg) {
-            Toast.makeText(context, "Lucky Money is Coming", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, (String) msg.obj, Toast.LENGTH_SHORT).show();
         }
     }
 }
