@@ -37,11 +37,11 @@ public class LuckyMoneyHook {
 
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyReceiveUI";
     public static final String receiveUIFunctionName = "c";
-    public static final String receiveUIParamName = "com.tencent.mm.af.m";
+    public static final String receiveUIParamName = "com.tencent.mm.ah.m";
 
     public static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     public static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
-    public static final String openUIClass = WECHAT_PACKAGE_NAME + ".bm.d";
+    public static final String openUIClass = WECHAT_PACKAGE_NAME + ".br.d";//MicroMsg.PluginHelper
     public static final String openUIMethodName = "b";
 
     public static HashSet<String> autoReceiveIds = new HashSet<>();
