@@ -1,9 +1,9 @@
 package com.xposed.hook;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
@@ -11,7 +11,7 @@ import android.widget.CompoundButton;
  * Created by lin on 2018/2/4.
  */
 
-public class LuckMoneySetting extends Activity {
+public class LuckMoneySetting extends AppCompatActivity {
 
     private CheckBox cb;
     private CheckBox cb2;

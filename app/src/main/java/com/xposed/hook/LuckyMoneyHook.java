@@ -35,7 +35,7 @@ public class LuckyMoneyHook {
 
     public static final String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
-    public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyReceiveUI";
+    public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     public static final String receiveUIFunctionName = "c";
     public static final String receiveUIParamName = "com.tencent.mm.ah.m";
 
@@ -157,7 +157,7 @@ public class LuckyMoneyHook {
                 param.putExtra("key_native_url", nativeUrlString);
                 param.putExtra("key_username", talker);
                 XposedHelpers.callStaticMethod(XposedHelpers.findClass(openUIClass, lpparam.classLoader),
-                        openUIMethodName, launcherUiActivity.get(), "luckymoney", ".ui.LuckyMoneyReceiveUI", param);
+                        openUIMethodName, launcherUiActivity.get(), "luckymoney", ".ui.LuckyMoneyNotHookReceiveUI", param);
             }
         } catch (Exception e) {
             XposedBridge.log(e);
