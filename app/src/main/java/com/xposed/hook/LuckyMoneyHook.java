@@ -35,6 +35,9 @@ public class LuckyMoneyHook {
 
     public static final String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
+    public static final String tinkerEnableClass = "com.tencent.tinker.loader.shareutil.ShareTinkerInternals";
+    public static final String tinkerEnableMethodName = "Px";
+
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     public static final String receiveUIFunctionName = "c";
     public static final String receiveUIParamName = "com.tencent.mm.ah.m";
@@ -53,6 +56,7 @@ public class LuckyMoneyHook {
 
     public static void hook(final XC_LoadPackage.LoadPackageParam mLpp) {
         if (WECHAT_PACKAGE_NAME.equals(mLpp.packageName)) {
+            disableTinker(mLpp);
             XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", "lucky_money");
             try {
                 XposedHelpers.findAndHookMethod("android.app.Application", mLpp.classLoader, "attach", Context.class, new XC_MethodHook() {
@@ -159,6 +163,19 @@ public class LuckyMoneyHook {
                 XposedHelpers.callStaticMethod(XposedHelpers.findClass(openUIClass, lpparam.classLoader),
                         openUIMethodName, launcherUiActivity.get(), "luckymoney", ".ui.LuckyMoneyNotHookReceiveUI", param);
             }
+        } catch (Exception e) {
+            XposedBridge.log(e);
+        }
+    }
+
+    private static void disableTinker(XC_LoadPackage.LoadPackageParam lpparam) {
+        try {
+            XposedHelpers.findAndHookMethod(tinkerEnableClass, lpparam.classLoader, tinkerEnableMethodName, int.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    param.setResult(false);
+                }
+            });
         } catch (Exception e) {
             XposedBridge.log(e);
         }

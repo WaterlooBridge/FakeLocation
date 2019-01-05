@@ -128,7 +128,7 @@ public class WechatUnrecalledHook {
 
     public static void hook3DaysMoments(ClassLoader loader) {
         findAndHookMethod(SQLiteDatabaseClass, loader, "rawQueryWithFactory",
-                SQLiteDatabaseClass + ".CursorFactory", String.class, String[].class, String.class, "com.tencent.wcdb.support.CancellationSignal",
+                SQLiteDatabaseClass + ".CursorFactory", String.class, Object[].class, String.class, "com.tencent.wcdb.support.CancellationSignal",
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
