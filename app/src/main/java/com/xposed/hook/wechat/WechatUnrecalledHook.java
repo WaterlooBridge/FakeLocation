@@ -24,18 +24,20 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class WechatUnrecalledHook {
 
-    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.br";
-    public static String recallMethod = "y";
+    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bs";
+    public static String recallMethod = "z";
     public static String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
     public static String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.v";
     public static String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
-    public static String incMsgLocalIdClass = "com.tencent.mm.storage.bj";
-    public static String incMsgLocalIdMethod = "ajm";
-    public static String updateMsgLocalIdMethod = "bEO";
+    public static String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bj";
+    public static String incMsgLocalIdMethod = "aoh";
+    public static String updateMsgLocalIdMethod = "ac";
+    public static String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bi";
 
     protected boolean mDebug = true;
     protected WechatMainDBHelper mDb;
     protected Object mObject;
+    protected Object updateMsgLocalIdMethodParamObj;
 
     Map<String, Boolean> mSettings = new HashMap<>();
 
@@ -171,6 +173,12 @@ public class WechatUnrecalledHook {
                     mObject = param.getResult();
             }
         });
+        try {
+            Class cls = XposedHelpers.findClass(updateMsgLocalIdMethodParam, loader);
+            updateMsgLocalIdMethodParamObj = cls.newInstance();
+        } catch (Exception e) {
+            XposedBridge.log(e);
+        }
     }
 
     protected void preventMsgRecall(XC_MethodHook.MethodHookParam param) {
@@ -230,7 +238,7 @@ public class WechatUnrecalledHook {
 
     protected void updateMessageCount() {
         if (mObject != null) {
-            XposedHelpers.callMethod(mObject, updateMsgLocalIdMethod);
+            XposedHelpers.callMethod(mObject, updateMsgLocalIdMethod, updateMsgLocalIdMethodParamObj);
             XposedBridge.log("updateMessageCount");
         }
     }

@@ -36,7 +36,7 @@ public class LuckyMoneyHook {
     public static final String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
     public static final String tinkerEnableClass = "com.tencent.tinker.loader.shareutil.ShareTinkerInternals";
-    public static final String tinkerEnableMethodName = "Px";
+    public static final String tinkerEnableMethodName = "QR";
 
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     public static final String receiveUIFunctionName = "c";
@@ -53,11 +53,13 @@ public class LuckyMoneyHook {
     public static ToastHandler handler;
 
     private static long msgId;
+    private static int delay;
 
     public static void hook(final XC_LoadPackage.LoadPackageParam mLpp) {
         if (WECHAT_PACKAGE_NAME.equals(mLpp.packageName)) {
             disableTinker(mLpp);
             XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", "lucky_money");
+            delay = preferences.getInt("lucky_money_delay", 0);
             try {
                 XposedHelpers.findAndHookMethod("android.app.Application", mLpp.classLoader, "attach", Context.class, new XC_MethodHook() {
                     @Override
@@ -155,13 +157,22 @@ public class LuckyMoneyHook {
                     .getJSONObject("msg").getJSONObject("appmsg").getJSONObject("wcpayinfo");
             String nativeUrlString = wcpayinfo.getString("nativeurl");
 
-            if (launcherUiActivity != null && launcherUiActivity.get() != null) {
-                Intent param = new Intent();
-                param.putExtra("key_way", 1);
-                param.putExtra("key_native_url", nativeUrlString);
-                param.putExtra("key_username", talker);
-                XposedHelpers.callStaticMethod(XposedHelpers.findClass(openUIClass, lpparam.classLoader),
-                        openUIMethodName, launcherUiActivity.get(), "luckymoney", ".ui.LuckyMoneyNotHookReceiveUI", param);
+            if (launcherUiActivity != null && launcherUiActivity.get() != null && handler != null) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Intent param = new Intent();
+                            param.putExtra("key_way", 1);
+                            param.putExtra("key_native_url", nativeUrlString);
+                            param.putExtra("key_username", talker);
+                            XposedHelpers.callStaticMethod(XposedHelpers.findClass(openUIClass, lpparam.classLoader),
+                                    openUIMethodName, launcherUiActivity.get(), "luckymoney", ".ui.LuckyMoneyNotHookReceiveUI", param);
+                        } catch (Exception e) {
+                            XposedBridge.log(e);
+                        }
+                    }
+                }, delay);
             }
         } catch (Exception e) {
             XposedBridge.log(e);
