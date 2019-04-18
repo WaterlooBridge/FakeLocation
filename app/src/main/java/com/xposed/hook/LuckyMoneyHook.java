@@ -36,15 +36,15 @@ public class LuckyMoneyHook {
     public static final String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
     public static final String tinkerEnableClass = "com.tencent.tinker.loader.shareutil.ShareTinkerInternals";
-    public static final String tinkerEnableMethodName = "QR";
+    public static final String tinkerEnableMethodName = "Se";
 
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     public static final String receiveUIFunctionName = "c";
-    public static final String receiveUIParamName = "com.tencent.mm.ah.m";
+    public static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".ai.m";
 
     public static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     public static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
-    public static final String openUIClass = WECHAT_PACKAGE_NAME + ".br.d";//MicroMsg.PluginHelper
+    public static final String openUIClass = WECHAT_PACKAGE_NAME + ".bp.d";//MicroMsg.PluginHelper
     public static final String openUIMethodName = "b";
 
     public static HashSet<String> autoReceiveIds = new HashSet<>();
@@ -183,7 +183,7 @@ public class LuckyMoneyHook {
         try {
             XposedHelpers.findAndHookMethod(tinkerEnableClass, lpparam.classLoader, tinkerEnableMethodName, int.class, new XC_MethodHook() {
                 @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     param.setResult(false);
                 }
             });

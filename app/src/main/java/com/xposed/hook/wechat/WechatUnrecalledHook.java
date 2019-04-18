@@ -24,13 +24,15 @@ import static de.robv.android.xposed.XposedHelpers.findClass;
 
 public class WechatUnrecalledHook {
 
-    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bs";
+    private static final int EXEC_SUC = 1;
+
+    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.br";
     public static String recallMethod = "z";
     public static String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
     public static String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.v";
     public static String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
     public static String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bj";
-    public static String incMsgLocalIdMethod = "aoh";
+    public static String incMsgLocalIdMethod = "apK";
     public static String updateMsgLocalIdMethod = "ac";
     public static String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bi";
 
@@ -121,7 +123,7 @@ public class WechatUnrecalledHook {
                         if (mSettings.get("prevent_moments_recall") &&
                                 query.toLowerCase().contains("snsinfo set sourcetype")) {
                             XposedBridge.log("preventMomentRecall executeSql");
-                            param.setResult(null);
+                            param.setResult(EXEC_SUC);
                         }
                     }
                 });
@@ -252,7 +254,7 @@ public class WechatUnrecalledHook {
         if (v.containsKey("commentflag") && v.getAsInteger("commentflag") == 1 &&
                 mSettings.get("prevent_comments_recall")) {
             XposedBridge.log("preventCommentRecall");
-            param.setResult(null); // prevent call
+            param.setResult(EXEC_SUC); // prevent call
         }
     }
 
@@ -269,7 +271,7 @@ public class WechatUnrecalledHook {
             //type: 2: text, 21 luckymoneyphoto,
             if (sourceType == 0 || (type != 2 && sourceType == 8/*set to private*/)) {
                 XposedBridge.log("preventMomentRecall");
-                param.setResult(null); // prevent call
+                param.setResult(EXEC_SUC); // prevent call
             }
         }
     }
