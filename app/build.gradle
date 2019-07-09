@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def releaseAppName() {
+    return "FakeLocation"
+}
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -7,12 +11,24 @@ android {
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
     buildTypes {
         release {
             minifyEnabled false
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        def fileName = "${releaseAppName()}_v${defaultConfig.versionName}.apk"
+                        output.outputFileName = fileName
+                    }
+                }
+            }
         }
+    }
+    lintOptions {
+        checkReleaseBuilds false
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
