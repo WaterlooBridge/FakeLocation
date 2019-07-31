@@ -36,15 +36,15 @@ public class LuckyMoneyHook {
     public static final String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
     public static final String tinkerEnableClass = "com.tencent.tinker.loader.shareutil.ShareTinkerInternals";
-    public static final String tinkerEnableMethodName = "Ti";
+    public static final String tinkerEnableMethodName = "Uo";
 
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     public static final String receiveUIFunctionName = "onSceneEnd";
-    public static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".ai.m";
+    public static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".ak.m";
 
     public static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     public static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
-    public static final String openUIClass = WECHAT_PACKAGE_NAME + ".bp.d";//MicroMsg.PluginHelper
+    public static final String openUIClass = WECHAT_PACKAGE_NAME + ".bs.d";//MicroMsg.PluginHelper
     public static final String openUIMethodName = "b";
 
     public static HashSet<String> autoReceiveIds = new HashSet<>();
