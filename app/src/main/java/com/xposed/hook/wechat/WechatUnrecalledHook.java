@@ -27,13 +27,13 @@ public class WechatUnrecalledHook {
     private static final int EXEC_SUC = 1;
 
     public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.br";
-    public static String recallMethod = "H";
+    public static String recallMethod = "J";
     public static String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
     public static String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.v";
     public static String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
     public static String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bj";
-    public static String incMsgLocalIdMethod = "atS";
-    public static String updateMsgLocalIdMethod = "ac";
+    public static String incMsgLocalIdMethod = "auW";
+    public static String updateMsgLocalIdMethod = "ad";
     public static String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bi";
 
     protected boolean mDebug = true;
