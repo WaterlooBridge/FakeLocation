@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">XposedHook</string>
+
+    <string name="gps_location">GPS Location</string>
+    <string name="cell_location">Cell Location</string>
+    <string name="current_lac">Current Lac:%1$s</string>
+    <string name="current_cid">Current Cid:%1$s</string>
+    <string name="current_latitude">Current Latitude:%1$s</string>
+    <string name="current_longitude">Current Longitude:%1$s</string>
+    <string name="auto_fill">Auto Fill</string>
+    <string name="open_location_hook">open hook</string>
+    <string name="save">Save</string>
+    <string name="save_success">Save Success</string>
+    <string name="reboot_app">Reboot App</string>
+
+    <string name="wechat_hook">Wechat Hook</string>
+    <string name="quick_open_lucky_money">quick open lucky money</string>
+    <string name="show_lucky_money_coming_toast">show lucky money coming toast</string>
+    <string name="prevent_message_recalled">prevent message recalled</string>
+    <string name="disable_3_days_of_Moments_limit">disable 3 days of Moments limit</string>
+    <string name="lucky_money_delay">lucky money delay</string>
 </resources>

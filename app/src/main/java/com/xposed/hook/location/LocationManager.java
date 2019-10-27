@@ -1,4 +1,4 @@
-package com.xposed.hook;
+package com.xposed.hook.location;
 
 import android.location.Location;
 import android.location.LocationListener;

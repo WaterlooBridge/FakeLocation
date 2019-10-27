@@ -1,4 +1,4 @@
-package com.xposed.hook;
+package com.xposed.hook.location;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.xposed.hook;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -10,49 +10,31 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.xposed.hook.entity.AppInfo;
+import com.xposed.hook.utils.AppUtil;
+import com.xposed.hook.utils.ViewHolder;
+
+import java.io.Serializable;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SharedPreferences sp;
-
-    private EditText etLatitude;
-    private EditText etLongitude;
     private ListView lv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        etLatitude = (EditText) findViewById(R.id.et_latitude);
-        etLongitude = (EditText) findViewById(R.id.et_longitude);
         lv = (ListView) findViewById(R.id.lv);
-        sp = getSharedPreferences("location", MODE_WORLD_READABLE);
-        etLatitude.setText(sp.getString("latitude", "34.752600"));
-        etLongitude.setText(sp.getString("longitude", "113.662000"));
-        findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sp.edit().putString("latitude", etLatitude.getText().toString())
-                        .putString("longitude", etLongitude.getText().toString()).commit();
-            }
-        });
-        lv.setAdapter(new MyAdapter(sp));
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CheckBox cb = ViewHolder.get(view, R.id.cb);
-                boolean flag = !cb.isChecked();
-                sp.edit().putBoolean(parent.getAdapter().getItem(position).toString(), flag).commit();
-                cb.setChecked(flag);
-            }
+        lv.setAdapter(new MyAdapter(getApplicationContext()));
+        lv.setOnItemClickListener((parent, view, position, id) -> {
+            startActivity(new Intent(this, RimetActivity.class)
+                    .putExtra("appInfo", (Serializable) lv.getAdapter().getItem(position)));
         });
     }
 
@@ -66,10 +48,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.item_dingding) {
-            startActivity(new Intent(this, RimetActivity.class));
-            return true;
-        } else if (id == R.id.item_luck_money) {
+        if (id == R.id.item_luck_money) {
             startActivity(new Intent(this, LuckMoneySetting.class));
             return true;
         } else {
@@ -79,11 +58,10 @@ public class MainActivity extends AppCompatActivity {
 
     private static class MyAdapter extends BaseAdapter {
 
-        private List<String> list = PkgConfig.packages;
-        private SharedPreferences sp;
+        private List<AppInfo> list;
 
-        public MyAdapter(SharedPreferences preferences) {
-            sp = preferences;
+        public MyAdapter(Context context) {
+            list = AppUtil.getAppList(context);
         }
 
         @Override
@@ -92,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public String getItem(int position) {
+        public AppInfo getItem(int position) {
             return list.get(position);
         }
 
@@ -105,11 +83,13 @@ public class MainActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             if (convertView == null)
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_package, parent, false);
-            TextView tv = ViewHolder.get(convertView, R.id.tv);
-            CheckBox cb = ViewHolder.get(convertView, R.id.cb);
-            String pkg = list.get(position);
-            tv.setText(pkg);
-            cb.setChecked(sp.getBoolean(pkg, false));
+            ImageView iv_icon = ViewHolder.get(convertView, R.id.iv_icon);
+            TextView tv_title = ViewHolder.get(convertView, R.id.tv_title);
+            TextView tv_package = ViewHolder.get(convertView, R.id.tv_package);
+            AppInfo pkg = list.get(position);
+            iv_icon.setImageDrawable(pkg.icon);
+            tv_title.setText(pkg.title);
+            tv_package.setText(pkg.packageName);
             return convertView;
         }
     }

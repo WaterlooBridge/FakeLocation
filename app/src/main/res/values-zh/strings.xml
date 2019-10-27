@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">XposedHook</string>
+
+    <string name="gps_location">GPS定位</string>
+    <string name="cell_location">基站定位</string>
+    <string name="current_lac">当前位置基站信息 Lac:%1$s</string>
+    <string name="current_cid">当前位置基站信息 Cid:%1$s</string>
+    <string name="current_latitude">当前位置GPS信息 Latitude:%1$s</string>
+    <string name="current_longitude">当前位置GPS信息 Longitude:%1$s</string>
+    <string name="auto_fill">自动填入当前位置</string>
+    <string name="open_location_hook">开启定位修改</string>
+    <string name="save">保存</string>
+    <string name="save_success">保存成功</string>
+    <string name="reboot_app">重启App</string>
+
+    <string name="wechat_hook">微信红包</string>
+    <string name="quick_open_lucky_money">快速打开红包</string>
+    <string name="show_lucky_money_coming_toast">有红包消息时toast提示</string>
+    <string name="prevent_message_recalled">消息防撤回</string>
+    <string name="disable_3_days_of_Moments_limit">解除好友朋友圈仅3天可见限制</string>
+    <string name="lucky_money_delay">自动抢红包延时</string>
+</resources>

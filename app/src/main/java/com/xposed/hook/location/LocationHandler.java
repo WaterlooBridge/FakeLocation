@@ -1,8 +1,7 @@
-package com.xposed.hook;
+package com.xposed.hook.location;
 
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,7 +62,7 @@ public class LocationHandler extends Handler {
             final Map listeners = LocationManager.mListeners.get(transport);
             notifyLocation(listeners);
             sendEmptyMessageDelayed(0, 10000);
-            Log.e(HookUtils.TAG, "Avalon Hook Location Success");
+            Log.e(LocationHook.TAG, "Avalon Hook Location Success");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -128,7 +127,7 @@ public class LocationHandler extends Handler {
                         Object value = entry.getValue();
                         if (value != null) {
                             try {
-                                Log.e(HookUtils.TAG, value.toString());
+                                Log.e(LocationHook.TAG, value.toString());
                                 LocationManager.ListenerTransport.onLocationChanged.call(value, location);
                             } catch (Throwable e) {
                                 e.printStackTrace();

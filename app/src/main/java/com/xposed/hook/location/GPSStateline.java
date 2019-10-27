@@ -1,4 +1,4 @@
-package com.xposed.hook;
+package com.xposed.hook.location;
 
 
 class GPSStateline {

@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.xposed.hook.LuckyMoneyHook;
-
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;

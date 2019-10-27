@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
@@ -14,10 +13,10 @@ import android.widget.EditText;
 
 public class LuckMoneySetting extends AppCompatActivity {
 
-    private CheckBox cb;
-    private CheckBox cb2;
-    private CheckBox cb3;
-    private CheckBox cb4;
+    private CompoundButton cb;
+    private CompoundButton cb2;
+    private CompoundButton cb3;
+    private CompoundButton cb4;
     private EditText et_lucky_money_delay;
 
     private SharedPreferences sp;
@@ -27,10 +26,10 @@ public class LuckMoneySetting extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lucky_money_setting);
         setTitle("微信红包");
-        cb = (CheckBox) findViewById(R.id.cb);
-        cb2 = (CheckBox) findViewById(R.id.cb2);
-        cb3 = (CheckBox) findViewById(R.id.cb3);
-        cb4 = (CheckBox) findViewById(R.id.cb4);
+        cb = (CompoundButton) findViewById(R.id.cb);
+        cb2 = (CompoundButton) findViewById(R.id.cb2);
+        cb3 = (CompoundButton) findViewById(R.id.cb3);
+        cb4 = (CompoundButton) findViewById(R.id.cb4);
         et_lucky_money_delay = findViewById(R.id.et_lucky_money_delay);
         sp = getSharedPreferences("lucky_money", MODE_WORLD_READABLE);
         cb.setChecked(sp.getBoolean("quick_open", true));

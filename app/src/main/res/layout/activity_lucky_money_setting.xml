@@ -2,31 +2,81 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp">
 
-    <CheckBox
-        android:id="@+id/cb"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="quick open lucky money" />
+        android:layout_height="40dp">
 
-    <CheckBox
-        android:id="@+id/cb2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="show lucky money coming toast" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/quick_open_lucky_money" />
 
-    <CheckBox
-        android:id="@+id/cb3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="prevent message recalled" />
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end" />
 
-    <CheckBox
-        android:id="@+id/cb4"
+    </FrameLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="disable 3 days of Moments limit" />
+        android:layout_height="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/show_lucky_money_coming_toast" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/cb2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/prevent_message_recalled" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/cb3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/disable_3_days_of_Moments_limit" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/cb4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,12 +86,13 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="lucky money delay" />
+            android:text="@string/lucky_money_delay" />
 
         <EditText
             android:id="@+id/et_lucky_money_delay"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="number" />
     </LinearLayout>
 
 </LinearLayout>

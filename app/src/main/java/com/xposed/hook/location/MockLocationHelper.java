@@ -1,7 +1,6 @@
-package com.xposed.hook;
+package com.xposed.hook.location;
 
 import android.location.Location;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

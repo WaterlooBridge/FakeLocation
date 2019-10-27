@@ -2,10 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/item_dingding"
-        android:title="钉钉"/>
-
-    <item
         android:id="@+id/item_luck_money"
-        android:title="微信红包"/>
+        android:title="@string/wechat_hook"/>
 </menu>

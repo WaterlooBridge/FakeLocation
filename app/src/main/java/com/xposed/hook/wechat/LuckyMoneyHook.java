@@ -1,4 +1,4 @@
-package com.xposed.hook;
+package com.xposed.hook.wechat;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -13,8 +13,8 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.xposed.hook.location.LocationHook;
 import com.xposed.hook.utils.XmlToJson;
-import com.xposed.hook.wechat.WechatUnrecalledHook;
 
 import org.json.JSONObject;
 
@@ -78,7 +78,7 @@ public class LuckyMoneyHook {
                                     button.performClick();
                                 }
                             } catch (Exception e) {
-                                Log.e(HookUtils.TAG, e.toString());
+                                Log.e(LocationHook.TAG, e.toString());
                             }
                         }
                     });

@@ -1,4 +1,4 @@
-package com.xposed.hook;
+package com.xposed.hook.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
 public class PkgConfig {
 
     public static final List<String> packages = new ArrayList<>();
-    public static final String pkg_dingding = "com.alibaba.android.rimet";
+    public static final String pkg_dingtalk = "com.alibaba.android.rimet";
 
     static {
         packages.add("com.autonavi.minimap");
