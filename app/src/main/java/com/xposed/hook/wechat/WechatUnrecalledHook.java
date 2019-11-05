@@ -30,7 +30,7 @@ public class WechatUnrecalledHook {
     public static String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.v";
     public static String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
     public static String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bj";
-    public static String incMsgLocalIdMethod = "auW";
+    public static String incMsgLocalIdMethod = "avU";
     public static String updateMsgLocalIdMethod = "ad";
     public static String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bi";
 

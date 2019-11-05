@@ -46,24 +46,23 @@ public class LocationHandler extends Handler {
     public void handleMessage(Message msg) {
         try {
             Object transport = context.getSystemService(Context.LOCATION_SERVICE);
-            Map gpsStatusListeners;
-            if (Build.VERSION.SDK_INT >= 24) {
-                Map nmeaListeners = LocationManager.mGnssNmeaListeners.get(transport);
-                notifyGPSStatus(LocationManager.mGnssStatusListeners.get(transport));
-                notifyMNmeaListener(nmeaListeners);
-                gpsStatusListeners = LocationManager.mGpsStatusListeners.get(transport);
-                notifyGPSStatus(gpsStatusListeners);
-                notifyMNmeaListener(LocationManager.mGpsNmeaListeners.get(transport));
-            } else {
-                gpsStatusListeners = LocationManager.mGpsStatusListeners.get(transport);
-                notifyGPSStatus(gpsStatusListeners);
-                notifyMNmeaListener(LocationManager.mNmeaListeners.get(transport));
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    notifyGPSStatus(LocationManager.mGnssStatusListeners.get(transport));
+                    notifyMNmeaListener(LocationManager.mGnssNmeaListeners.get(transport));
+                    notifyGPSStatus(LocationManager.mGpsStatusListeners.get(transport));
+                    notifyMNmeaListener(LocationManager.mGpsNmeaListeners.get(transport));
+                } else {
+                    notifyGPSStatus(LocationManager.mGpsStatusListeners.get(transport));
+                    notifyMNmeaListener(LocationManager.mNmeaListeners.get(transport));
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
-            final Map listeners = LocationManager.mListeners.get(transport);
-            notifyLocation(listeners);
+            notifyLocation(LocationManager.mListeners.get(transport));
             sendEmptyMessageDelayed(0, 10000);
             Log.e(LocationHook.TAG, "Avalon Hook Location Success");
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -117,26 +116,20 @@ public class LocationHandler extends Handler {
     }
 
     private void notifyLocation(Map listeners) {
-        if (listeners != null) {
-            try {
-                if (!listeners.isEmpty()) {
-                    Location location = createLocation(latitude, longitude);
-                    //noinspection unchecked
-                    Set<Map.Entry> entries = listeners.entrySet();
-                    for (Map.Entry entry : entries) {
-                        Object value = entry.getValue();
-                        if (value != null) {
-                            try {
-                                Log.e(LocationHook.TAG, value.toString());
-                                LocationManager.ListenerTransport.onLocationChanged.call(value, location);
-                            } catch (Throwable e) {
-                                e.printStackTrace();
-                            }
-                        }
+        if (listeners != null && !listeners.isEmpty()) {
+            Location location = createLocation(latitude, longitude);
+            //noinspection unchecked
+            Set<Map.Entry> entries = listeners.entrySet();
+            for (Map.Entry entry : entries) {
+                Object value = entry.getValue();
+                if (value != null) {
+                    try {
+                        Log.e(LocationHook.TAG, value.toString());
+                        LocationManager.ListenerTransport.onLocationChanged.call(value, location);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
                     }
                 }
-            } catch (Throwable e) {
-                e.printStackTrace();
             }
         }
     }
@@ -151,7 +144,7 @@ public class LocationHandler extends Handler {
                     if (value != null) {
                         MockLocationHelper.invokeNmeaReceived(value);
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }

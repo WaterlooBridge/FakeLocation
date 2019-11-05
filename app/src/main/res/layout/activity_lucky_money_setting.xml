@@ -95,4 +95,11 @@
             android:inputType="number" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/btn_reboot_app"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="@string/reboot_app" />
+
 </LinearLayout>

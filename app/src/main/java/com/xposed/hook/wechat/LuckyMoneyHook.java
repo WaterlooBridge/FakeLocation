@@ -36,7 +36,7 @@ public class LuckyMoneyHook {
     public static final String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
     public static final String tinkerEnableClass = "com.tencent.tinker.loader.shareutil.ShareTinkerInternals";
-    public static final String tinkerEnableMethodName = "VP";
+    public static final String tinkerEnableMethodName = "VX";
 
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     public static final String receiveUIFunctionName = "onSceneEnd";

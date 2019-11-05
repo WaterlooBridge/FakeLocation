@@ -1,11 +1,17 @@
 package com.xposed.hook;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+
+import com.xposed.hook.wechat.LuckyMoneyHook;
 
 /**
  * Created by lin on 2018/2/4.
@@ -25,7 +31,7 @@ public class LuckMoneySetting extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lucky_money_setting);
-        setTitle("微信红包");
+        setTitle(R.string.wechat_hook);
         cb = (CompoundButton) findViewById(R.id.cb);
         cb2 = (CompoundButton) findViewById(R.id.cb2);
         cb3 = (CompoundButton) findViewById(R.id.cb3);
@@ -61,11 +67,30 @@ public class LuckMoneySetting extends AppCompatActivity {
                 sp.edit().putBoolean("3_days_Moments", isChecked).commit();
             }
         });
+        findViewById(R.id.btn_reboot_app).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveLuckyMoneyDelay();
+                try {
+                    Intent intent = new Intent();
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.setData(Uri.fromParts("package", LuckyMoneyHook.WECHAT_PACKAGE_NAME, null));
+                    startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
     public void finish() {
         super.finish();
+        saveLuckyMoneyDelay();
+    }
+
+    private void saveLuckyMoneyDelay() {
         try {
             int delay = Integer.parseInt(et_lucky_money_delay.getText().toString());
             sp.edit().putInt("lucky_money_delay", delay).commit();
