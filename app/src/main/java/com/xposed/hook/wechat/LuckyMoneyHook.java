@@ -36,11 +36,11 @@ public class LuckyMoneyHook {
     public static final String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
     public static final String tinkerEnableClass = "com.tencent.tinker.loader.shareutil.ShareTinkerInternals";
-    public static final String tinkerEnableMethodName = "VX";
+    public static final String tinkerEnableMethodName = "aay";
 
     public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     public static final String receiveUIFunctionName = "onSceneEnd";
-    public static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".aj.m";
+    public static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".ak.m";
 
     public static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     public static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
@@ -77,7 +77,7 @@ public class LuckyMoneyHook {
                                 if (button.isShown() && button.isClickable()) {
                                     button.performClick();
                                 }
-                            } catch (Exception e) {
+                            } catch (Throwable e) {
                                 Log.e(LocationHook.TAG, e.toString());
                             }
                         }
@@ -130,7 +130,7 @@ public class LuckyMoneyHook {
                         }
                     });
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 XposedBridge.log(e);
             }
             if (preferences.getBoolean("recalled", true))
@@ -168,13 +168,13 @@ public class LuckyMoneyHook {
                             param.putExtra("key_username", talker);
                             XposedHelpers.callStaticMethod(XposedHelpers.findClass(openUIClass, lpparam.classLoader),
                                     openUIMethodName, launcherUiActivity.get(), "luckymoney", ".ui.LuckyMoneyNotHookReceiveUI", param);
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             XposedBridge.log(e);
                         }
                     }
                 }, delay);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             XposedBridge.log(e);
         }
     }
@@ -187,7 +187,7 @@ public class LuckyMoneyHook {
                     param.setResult(false);
                 }
             });
-        } catch (Exception e) {
+        } catch (Throwable e) {
             XposedBridge.log(e);
         }
     }

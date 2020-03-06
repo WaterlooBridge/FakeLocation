@@ -200,7 +200,7 @@ public class LocationHook {
     private static void hookMethod(Class<?> clazz, String methodName, Object... parameterTypesAndCallback) {
         try {
             XposedHelpers.findAndHookMethod(clazz, methodName, parameterTypesAndCallback);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             Log.e(TAG, e.toString());
         }
     }
@@ -210,7 +210,7 @@ public class LocationHook {
                                    Object... parameterTypesAndCallback) {
         try {
             XposedHelpers.findAndHookMethod(className, classLoader, methodName, parameterTypesAndCallback);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             Log.e(TAG, e.toString());
         }
     }
@@ -226,7 +226,7 @@ public class LocationHook {
                         && Modifier.isPublic(method.getModifiers())) {
                     XposedBridge.hookMethod(method, xmh);
                 }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             Log.e(TAG, e.toString());
         }
     }

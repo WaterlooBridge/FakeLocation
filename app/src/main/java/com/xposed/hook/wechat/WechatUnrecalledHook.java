@@ -24,14 +24,14 @@ public class WechatUnrecalledHook {
 
     private static final int EXEC_SUC = 1;
 
-    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.br";
-    public static String recallMethod = "J";
+    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bx";
+    public static String recallMethod = "R";
     public static String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
     public static String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.v";
     public static String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
     public static String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bj";
-    public static String incMsgLocalIdMethod = "avU";
-    public static String updateMsgLocalIdMethod = "ad";
+    public static String incMsgLocalIdMethod = "aDK";
+    public static String updateMsgLocalIdMethod = "aj";
     public static String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bi";
 
     protected boolean mDebug = true;
@@ -135,11 +135,13 @@ public class WechatUnrecalledHook {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         Log.e("rawQueryWithFactory", param.args[1] + ":" + param.args[3]);
+                        String sourceType = "sourceType in (8,72,10,74,12,76,14,78,24,88,26,90,28,92,30,94)";
+                        String type = "type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26,28,29)";
                         if (param.args[1] != null && param.args[1].toString().contains("from SnsInfo") &&
-                                param.args[1].toString().contains("sourceType in (8,10,12,14)") &&
-                                param.args[1].toString().contains("type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26)")) {
-                            param.args[1] = param.args[1].toString().replace("sourceType in (8,10,12,14)", "1=1")
-                                    .replace("type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26)", "1=1")
+                                param.args[1].toString().contains(sourceType) &&
+                                param.args[1].toString().contains(type)) {
+                            param.args[1] = param.args[1].toString().replace(sourceType, "1=1")
+                                    .replace(type, "1=1")
                                     .replace("snsId >=", "0 !=");
                         }
                     }
@@ -176,7 +178,7 @@ public class WechatUnrecalledHook {
         try {
             Class cls = XposedHelpers.findClass(updateMsgLocalIdMethodParam, loader);
             updateMsgLocalIdMethodParamObj = cls.newInstance();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             XposedBridge.log(e);
         }
     }
