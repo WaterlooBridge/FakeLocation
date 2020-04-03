@@ -35,22 +35,22 @@ public class LuckyMoneyHook {
 
     public static final String WECHAT_PACKAGE_NAME = "com.tencent.mm";
 
-    public static final String tinkerEnableClass = "com.tencent.tinker.loader.shareutil.ShareTinkerInternals";
-    public static final String tinkerEnableMethodName = "aay";
+    private static final String tinkerEnableClass = "com.tencent.tinker.loader.shareutil.ShareTinkerInternals";
+    private static final String tinkerEnableMethodName = "abm";
 
-    public static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
-    public static final String receiveUIFunctionName = "onSceneEnd";
-    public static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".ak.m";
+    private static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
+    private static final String receiveUIFunctionName = "onSceneEnd";
+    private static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".al.n";
 
-    public static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
-    public static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
-    public static final String openUIClass = WECHAT_PACKAGE_NAME + ".bq.d";//MicroMsg.PluginHelper
-    public static final String openUIMethodName = "b";
+    private static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
+    private static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
+    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".bs.d";//MicroMsg.PluginHelper
+    private static final String openUIMethodName = "b";
 
-    public static HashSet<String> autoReceiveIds = new HashSet<>();
-    public static WeakReference<Activity> launcherUiActivity;
+    private static HashSet<String> autoReceiveIds = new HashSet<>();
+    private static WeakReference<Activity> launcherUiActivity;
 
-    public static ToastHandler handler;
+    private static ToastHandler handler;
 
     private static long msgId;
     private static int delay;
@@ -158,19 +158,16 @@ public class LuckyMoneyHook {
             String nativeUrlString = wcpayinfo.getString("nativeurl");
 
             if (launcherUiActivity != null && launcherUiActivity.get() != null && handler != null) {
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Intent param = new Intent();
-                            param.putExtra("key_way", 1);
-                            param.putExtra("key_native_url", nativeUrlString);
-                            param.putExtra("key_username", talker);
-                            XposedHelpers.callStaticMethod(XposedHelpers.findClass(openUIClass, lpparam.classLoader),
-                                    openUIMethodName, launcherUiActivity.get(), "luckymoney", ".ui.LuckyMoneyNotHookReceiveUI", param);
-                        } catch (Throwable e) {
-                            XposedBridge.log(e);
-                        }
+                handler.postDelayed(() -> {
+                    try {
+                        Intent param = new Intent();
+                        param.putExtra("key_way", 1);
+                        param.putExtra("key_native_url", nativeUrlString);
+                        param.putExtra("key_username", talker);
+                        XposedHelpers.callStaticMethod(XposedHelpers.findClass(openUIClass, lpparam.classLoader),
+                                openUIMethodName, launcherUiActivity.get(), "luckymoney", ".ui.LuckyMoneyNotHookReceiveUI", param);
+                    } catch (Throwable e) {
+                        XposedBridge.log(e);
                     }
                 }, delay);
             }
@@ -196,7 +193,7 @@ public class LuckyMoneyHook {
 
         private Context context;
 
-        public ToastHandler(Context context) {
+        ToastHandler(Context context) {
             super(Looper.getMainLooper());
             this.context = context;
         }

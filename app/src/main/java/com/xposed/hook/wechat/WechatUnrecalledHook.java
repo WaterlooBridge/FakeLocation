@@ -24,29 +24,30 @@ public class WechatUnrecalledHook {
 
     private static final int EXEC_SUC = 1;
 
-    public static String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bx";
-    public static String recallMethod = "R";
-    public static String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
-    public static String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.v";
-    public static String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
-    public static String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bj";
-    public static String incMsgLocalIdMethod = "aDK";
-    public static String updateMsgLocalIdMethod = "aj";
-    public static String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bi";
+    static final String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
 
-    protected boolean mDebug = true;
-    protected WechatMainDBHelper mDb;
-    protected Object mObject;
-    protected Object updateMsgLocalIdMethodParamObj;
+    private static final String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bw";
+    private static final String recallMethod = "Q";
+    private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.v";
+    private static final String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
+    private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bk";
+    private static final String incMsgLocalIdMethod = "aGn";
+    private static final String updateMsgLocalIdMethod = "an";
+    private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bj";
 
-    Map<String, Boolean> mSettings = new HashMap<>();
+    private static final boolean mDebug = true;
+    private WechatMainDBHelper mDb;
+    private Object mObject;
+    private Object updateMsgLocalIdMethodParamObj;
 
-    public WechatUnrecalledHook(String packageName) {
+    private Map<String, Boolean> mSettings = new HashMap<>();
+
+    WechatUnrecalledHook(String packageName) {
         mSettings.put("prevent_moments_recall", true);
         mSettings.put("prevent_comments_recall", true);
     }
 
-    public static void findAndHookConstructor(String className, ClassLoader classLoader, Object... parameters) {
+    private static void findAndHookConstructor(String className, ClassLoader classLoader, Object... parameters) {
         Class<?> cls = findClass(className, classLoader);
         Class<?>[] parameterTypes = new Class[parameters.length - 1];
         for (int i = 0; i < parameters.length - 1; i++) {
@@ -89,7 +90,7 @@ public class WechatUnrecalledHook {
         }
     }
 
-    protected void hookRecall(final ClassLoader loader) {
+    private void hookRecall(final ClassLoader loader) {
         findAndHookMethod(recallClass, loader,
                 recallMethod, String.class, String.class,
                 new XC_MethodHook() {
@@ -101,7 +102,7 @@ public class WechatUnrecalledHook {
                 });
     }
 
-    protected void hookDatabase(ClassLoader loader) {
+    private void hookDatabase(ClassLoader loader) {
         findAndHookMethod(SQLiteDatabaseClass, loader,
                 "updateWithOnConflict", String.class, ContentValues.class, String.class,
                 String[].class, int.class,
@@ -128,7 +129,7 @@ public class WechatUnrecalledHook {
 
     }
 
-    public static void hook3DaysMoments(ClassLoader loader) {
+    static void hook3DaysMoments(ClassLoader loader) {
         findAndHookMethod(SQLiteDatabaseClass, loader, "rawQueryWithFactory",
                 SQLiteDatabaseClass + ".CursorFactory", String.class, Object[].class, String.class, "com.tencent.wcdb.support.CancellationSignal",
                 new XC_MethodHook() {
@@ -136,7 +137,7 @@ public class WechatUnrecalledHook {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         Log.e("rawQueryWithFactory", param.args[1] + ":" + param.args[3]);
                         String sourceType = "sourceType in (8,72,10,74,12,76,14,78,24,88,26,90,28,92,30,94)";
-                        String type = "type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26,28,29)";
+                        String type = "type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26,28,29,30)";
                         if (param.args[1] != null && param.args[1].toString().contains("from SnsInfo") &&
                                 param.args[1].toString().contains(sourceType) &&
                                 param.args[1].toString().contains(type)) {
@@ -149,7 +150,7 @@ public class WechatUnrecalledHook {
                 });
     }
 
-    protected void hookDbObject(final ClassLoader loader) {
+    private void hookDbObject(final ClassLoader loader) {
         // get database object
         findAndHookConstructor(storageClass, loader,
                 storageMethodParam, new XC_MethodHook() {
@@ -167,7 +168,7 @@ public class WechatUnrecalledHook {
                 });
     }
 
-    protected void hookMsgLocalId(ClassLoader loader) {
+    private void hookMsgLocalId(ClassLoader loader) {
         findAndHookMethod(incMsgLocalIdClass, loader, incMsgLocalIdMethod, String.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -183,7 +184,7 @@ public class WechatUnrecalledHook {
         }
     }
 
-    protected void preventMsgRecall(XC_MethodHook.MethodHookParam param) {
+    private void preventMsgRecall(XC_MethodHook.MethodHookParam param) {
         String xml = (String) param.args[0];
         String tag = (String) param.args[1];
         if (TextUtils.isEmpty(xml) || TextUtils.isEmpty(tag) ||
@@ -238,14 +239,14 @@ public class WechatUnrecalledHook {
 
     }
 
-    protected void updateMessageCount() {
+    private void updateMessageCount() {
         if (mObject != null) {
             XposedHelpers.callMethod(mObject, updateMsgLocalIdMethod, updateMsgLocalIdMethodParamObj);
             XposedBridge.log("updateMessageCount");
         }
     }
 
-    public void preventCommentRecall(XC_MethodHook.MethodHookParam param) {
+    private void preventCommentRecall(XC_MethodHook.MethodHookParam param) {
         String table = (String) param.args[0];
         if (!table.equalsIgnoreCase("snscomment"))
             return;
@@ -258,7 +259,7 @@ public class WechatUnrecalledHook {
         }
     }
 
-    public void preventMomentRecall(XC_MethodHook.MethodHookParam param) {
+    private void preventMomentRecall(XC_MethodHook.MethodHookParam param) {
         String table = (String) param.args[0];
         if (!table.equalsIgnoreCase("snsinfo"))
             return;
@@ -276,7 +277,7 @@ public class WechatUnrecalledHook {
         }
     }
 
-    protected void log(Throwable t) {
+    private void log(Throwable t) {
         if (mDebug) {
             XposedBridge.log(t);
         }
