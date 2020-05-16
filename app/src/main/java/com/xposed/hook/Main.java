@@ -15,11 +15,11 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  * Created by lin on 2017/7/22.
  */
 
-public class HookTest implements IXposedHookLoadPackage {
+public class Main implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        Log.e(LocationHook.TAG, loadPackageParam.packageName);
+        Log.e("***********************", loadPackageParam.packageName);
         LuckyMoneyHook.hook(loadPackageParam);
         XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", Constants.PREF_FILE_NAME);
         if (preferences.getBoolean(loadPackageParam.packageName, false)) {

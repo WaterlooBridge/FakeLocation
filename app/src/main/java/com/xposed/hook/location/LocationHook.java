@@ -24,7 +24,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class LocationHook {
 
-    public static String TAG = "***********************";
+    public static String TAG = "LocationHook";
 
     public static void hookAndChange(XC_LoadPackage.LoadPackageParam mLpp, final double latitude, final double longitude, final int lac, final int cid) {
 
