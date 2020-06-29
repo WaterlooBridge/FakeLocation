@@ -191,7 +191,7 @@ public class LocationHook {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 Log.e(TAG, "TelephonyManager listen");
-                param.args[0] = new PhoneStateListenerDelegate((PhoneStateListener) param.args[0], lac, cid);
+                param.args[0] = PhoneStateListenerDelegate.convert((PhoneStateListener) param.args[0], lac, cid);
             }
         });
     }
