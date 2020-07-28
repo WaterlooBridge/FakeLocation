@@ -27,13 +27,13 @@ public class WechatUnrecalledHook {
     static final String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
 
     private static final String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bv";//MicroMsg.SDK.XmlParser
-    private static final String recallMethod = "L";
-    private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.y";
+    private static final String recallMethod = "M";
+    private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.aa";
     private static final String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
-    private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bp";
-    private static final String incMsgLocalIdMethod = "aOs";
+    private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.br";
+    private static final String incMsgLocalIdMethod = "aQC";
     private static final String updateMsgLocalIdMethod = "as";
-    private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bo";
+    private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bq";
 
     private static final boolean mDebug = true;
     private WechatMainDBHelper mDb;
@@ -137,7 +137,7 @@ public class WechatUnrecalledHook {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         Log.e("rawQueryWithFactory", param.args[1] + ":" + param.args[3]);
                         String sourceType = "sourceType in (8,72,10,74,12,76,14,78,24,88,26,90,28,92,30,94)";
-                        String type = "type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26,28,29,30)";
+                        String type = "type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26,28,29,30,33)";
                         if (param.args[1] != null && param.args[1].toString().contains("from SnsInfo") &&
                                 param.args[1].toString().contains(sourceType) &&
                                 param.args[1].toString().contains(type)) {

@@ -4,11 +4,7 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Build;
-import android.telephony.PhoneStateListener;
 import android.util.Log;
-
-import com.xposed.hook.location.LocationHandler;
-import com.xposed.hook.location.PhoneStateListenerDelegate;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -187,13 +183,7 @@ public class LocationHook {
                     });
         }
 
-        hookMethods("android.telephony.TelephonyManager", "listen", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                Log.e(TAG, "TelephonyManager listen");
-                param.args[0] = PhoneStateListenerDelegate.convert((PhoneStateListener) param.args[0], lac, cid);
-            }
-        });
+        PhoneStateListenerDelegate.hookPhoneStateListener(lac, cid);
     }
 
     //不带参数的方法拦截
