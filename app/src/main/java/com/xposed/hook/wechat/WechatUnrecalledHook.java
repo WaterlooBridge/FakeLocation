@@ -26,14 +26,14 @@ public class WechatUnrecalledHook {
 
     static final String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
 
-    private static final String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bv";//MicroMsg.SDK.XmlParser
+    private static final String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bw";//MicroMsg.SDK.XmlParser
     private static final String recallMethod = "M";
-    private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.aa";
+    private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ac";
     private static final String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
-    private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.br";
-    private static final String incMsgLocalIdMethod = "aQC";
-    private static final String updateMsgLocalIdMethod = "as";
-    private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bq";
+    private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bv";
+    private static final String incMsgLocalIdMethod = "aUj";
+    private static final String updateMsgLocalIdMethod = "av";
+    private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bu";
 
     private static final boolean mDebug = true;
     private WechatMainDBHelper mDb;
