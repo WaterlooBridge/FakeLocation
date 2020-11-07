@@ -2,7 +2,6 @@ package com.xposed.hook.location;
 
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Build;
 import android.util.Log;
 
@@ -71,13 +70,7 @@ public class LocationHook {
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-
-                        if (param.args[3] instanceof LocationListener) {
-                            //位置监听器,当位置改变时会触发onLocationChanged方法
-                            LocationListener ll = (LocationListener) param.args[3];
-                            Log.e(TAG, "requestLocationUpdates::: args0: " + param.args[0] + "; arg1: " + param.args[1] + "; arg2: " + param.args[2]);
-                            LocationHandler.getInstance().start();
-                        }
+                        LocationHandler.getInstance().start();
                     }
                 });
 

@@ -28,12 +28,12 @@ public class WechatUnrecalledHook {
 
     private static final String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bx";//MicroMsg.SDK.XmlParser
     private static final String recallMethod = "M";
-    private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ad";
+    private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ah";
     private static final String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
-    private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bw";
-    private static final String incMsgLocalIdMethod = "aVK";
-    private static final String updateMsgLocalIdMethod = "au";
-    private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bv";
+    private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ca";
+    private static final String incMsgLocalIdMethod = "bbg";
+    private static final String updateMsgLocalIdMethod = "aC";
+    private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bz";
 
     private static final boolean mDebug = true;
     private WechatMainDBHelper mDb;
@@ -137,7 +137,7 @@ public class WechatUnrecalledHook {
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         Log.e("rawQueryWithFactory", param.args[1] + ":" + param.args[3]);
                         String sourceType = "sourceType in (8,72,10,74,12,76,14,78,24,88,26,90,28,92,30,94)";
-                        String type = "type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26,28,29,30,33)";
+                        String type = "type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26,28,29,30 , 34,38,33,37,36)";
                         if (param.args[1] != null && param.args[1].toString().contains("from SnsInfo") &&
                                 param.args[1].toString().contains(sourceType) &&
                                 param.args[1].toString().contains(type)) {

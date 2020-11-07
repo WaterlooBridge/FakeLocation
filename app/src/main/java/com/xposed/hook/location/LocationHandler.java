@@ -125,7 +125,10 @@ public class LocationHandler extends Handler {
                 if (value != null) {
                     try {
                         Log.e(LocationHook.TAG, value.toString());
-                        LocationManager.ListenerTransport.onLocationChanged.call(value, location);
+                        if (LocationManager.ListenerTransport.onLocationChanged != null)
+                            LocationManager.ListenerTransport.onLocationChanged.call(value, location);
+                        else if (LocationManager.LocationListenerTransport.onLocationChanged != null)
+                            LocationManager.LocationListenerTransport.onLocationChanged.call(value, location);
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }

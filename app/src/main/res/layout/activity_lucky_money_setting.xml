@@ -16,7 +16,7 @@
             android:layout_gravity="center_vertical"
             android:text="@string/quick_open_lucky_money" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/cb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
             android:layout_gravity="center_vertical"
             android:text="@string/show_lucky_money_coming_toast" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/cb2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
             android:layout_gravity="center_vertical"
             android:text="@string/prevent_message_recalled" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/cb3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
             android:layout_gravity="center_vertical"
             android:text="@string/disable_3_days_of_Moments_limit" />
 
-        <android.support.v7.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/cb4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -79,4 +79,10 @@ public class LocationManager {
         public static RefMethod<Void> onStatusChanged;
         public static RefObject<Object> this$0;
     }
+
+    public static class LocationListenerTransport {
+        public static Class<?> TYPE = RefClass.load(LocationListenerTransport.class, "android.location.LocationManager$LocationListenerTransport");
+        @MethodParams({Location.class})
+        public static RefMethod<Void> onLocationChanged;
+    }
 }
