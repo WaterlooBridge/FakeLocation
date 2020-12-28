@@ -40,11 +40,11 @@ public class LuckyMoneyHook {
 
     private static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     private static final String receiveUIFunctionName = "onSceneEnd";
-    private static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".ak.n";
+    private static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".aj.q";
 
     private static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     private static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
-    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".br.d";//MicroMsg.PluginHelper
+    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".bq.c";//MicroMsg.PluginHelper
     private static final String openUIMethodName = "b";
 
     private static HashSet<String> autoReceiveIds = new HashSet<>();

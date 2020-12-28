@@ -8,6 +8,8 @@ import android.util.Log;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -26,14 +28,14 @@ public class WechatUnrecalledHook {
 
     static final String SQLiteDatabaseClass = "com.tencent.wcdb.database.SQLiteDatabase";
 
-    private static final String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.bx";//MicroMsg.SDK.XmlParser
-    private static final String recallMethod = "M";
-    private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ah";
-    private static final String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.e.e";
-    private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ca";
-    private static final String incMsgLocalIdMethod = "bbg";
-    private static final String updateMsgLocalIdMethod = "aC";
-    private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.bz";
+    private static final String recallClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.platformtools.XmlParser";//MicroMsg.SDK.XmlParser
+    private static final String recallMethod = "parseXml";
+    private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ai";
+    private static final String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.storage.ISQLiteDatabase";
+    private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.cb";
+    private static final String incMsgLocalIdMethod = "beF";
+    private static final String updateMsgLocalIdMethod = "aB";
+    private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ca";
 
     private static final boolean mDebug = true;
     private WechatMainDBHelper mDb;
@@ -92,9 +94,8 @@ public class WechatUnrecalledHook {
 
     private void hookRecall(final ClassLoader loader) {
         findAndHookMethod(recallClass, loader,
-                recallMethod, String.class, String.class,
+                recallMethod, String.class, String.class, String.class,
                 new XC_MethodHook() {
-                    @SuppressWarnings("unchecked")
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         preventMsgRecall(param);
@@ -129,21 +130,21 @@ public class WechatUnrecalledHook {
 
     }
 
+    private static final Pattern sourceTypePattern = Pattern.compile("sourceType in \\(.*?\\)");
+    private static final Pattern typePattern = Pattern.compile("type in \\(.*?\\)");
+
     static void hook3DaysMoments(ClassLoader loader) {
         findAndHookMethod(SQLiteDatabaseClass, loader, "rawQueryWithFactory",
                 SQLiteDatabaseClass + ".CursorFactory", String.class, Object[].class, String.class, "com.tencent.wcdb.support.CancellationSignal",
                 new XC_MethodHook() {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        Log.e("rawQueryWithFactory", param.args[1] + ":" + param.args[3]);
-                        String sourceType = "sourceType in (8,72,10,74,12,76,14,78,24,88,26,90,28,92,30,94)";
-                        String type = "type in ( 1,2 , 3 , 4 , 18 , 5 , 12 , 9 , 14 , 15 , 13 , 21 , 25 , 26,28,29,30 , 34,38,33,37,36)";
-                        if (param.args[1] != null && param.args[1].toString().contains("from SnsInfo") &&
-                                param.args[1].toString().contains(sourceType) &&
-                                param.args[1].toString().contains(type)) {
-                            param.args[1] = param.args[1].toString().replace(sourceType, "1=1")
-                                    .replace(type, "1=1")
-                                    .replace("snsId >=", "0 !=");
+                        String sql = param.args[1].toString();
+                        Log.e("rawQueryWithFactory", sql + ":" + param.args[3]);
+                        Matcher matcher;
+                        if (sql.contains("from SnsInfo") && (matcher = sourceTypePattern.matcher(sql)).find() &&
+                                (matcher = typePattern.matcher(matcher.replaceAll("1=1"))).find()) {
+                            param.args[1] = matcher.replaceAll("1=1").replace("snsId >=", "0 !=");
                         }
                     }
 
