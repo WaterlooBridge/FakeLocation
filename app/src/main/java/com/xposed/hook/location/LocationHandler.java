@@ -48,12 +48,9 @@ public class LocationHandler extends Handler {
             Object transport = context.getSystemService(Context.LOCATION_SERVICE);
             try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    notifyGPSStatus(LocationManager.mGnssStatusListeners.get(transport));
                     notifyMNmeaListener(LocationManager.mGnssNmeaListeners.get(transport));
-                    notifyGPSStatus(LocationManager.mGpsStatusListeners.get(transport));
                     notifyMNmeaListener(LocationManager.mGpsNmeaListeners.get(transport));
                 } else {
-                    notifyGPSStatus(LocationManager.mGpsStatusListeners.get(transport));
                     notifyMNmeaListener(LocationManager.mNmeaListeners.get(transport));
                 }
             } catch (Throwable e) {
@@ -72,10 +69,9 @@ public class LocationHandler extends Handler {
         l.setLatitude(latitude);
         l.setLongitude(longitude);
         l.setAccuracy(8f);
+        l.setBearing((int) (360 * Math.random()));
         l.setTime(System.currentTimeMillis());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            l.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
-        }
+        l.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         Bundle extraBundle = new Bundle();
         l.setExtras(extraBundle);
         int svCount = VirtualGPSSatalines.get().getSvCount();
@@ -88,31 +84,12 @@ public class LocationHandler extends Handler {
         location.setLatitude(latitude);
         location.setLongitude(longitude);
         location.setTime(System.currentTimeMillis());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            location.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
-        }
+        location.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
     }
 
     public void start() {
         removeMessages(0);
         sendEmptyMessageDelayed(0, 1000);
-    }
-
-    private void notifyGPSStatus(Map listeners) {
-        if (listeners != null && !listeners.isEmpty()) {
-            //noinspection unchecked
-            Set<Map.Entry> entries = listeners.entrySet();
-            for (Map.Entry entry : entries) {
-                try {
-                    Object value = entry.getValue();
-                    if (value != null) {
-                        MockLocationHelper.invokeSvStatusChanged(value);
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     private void notifyLocation(Map listeners) {

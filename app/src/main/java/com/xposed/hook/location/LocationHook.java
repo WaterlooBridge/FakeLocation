@@ -2,8 +2,12 @@ package com.xposed.hook.location;
 
 import android.content.Context;
 import android.location.Location;
-import android.os.Build;
+import android.telephony.CellIdentityGsm;
+import android.telephony.CellIdentityLte;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
+
+import com.xposed.hook.config.Constants;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -36,20 +40,6 @@ public class LocationHook {
 
         hookMethod("android.net.wifi.WifiManager", mLpp.classLoader, "getScanResults",
                 new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param)
-                            throws Throwable {
-                        param.setResult(null);
-                    }
-                });
-
-        hookMethod("android.telephony.TelephonyManager", mLpp.classLoader, "getCellLocation",
-                new XC_MethodHook() {
-                    /**
-                     * android.telephony.TelephonyManager的getCellLocation方法
-                     * Returns the current location of the device.
-                     * Return null if current location is not available.
-                     */
                     @Override
                     protected void afterHookedMethod(MethodHookParam param)
                             throws Throwable {
@@ -136,8 +126,8 @@ public class LocationHook {
         hookMethods("android.telephony.TelephonyManager", "getSimState", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                Log.e(TAG, "getSimState");
-                param.setResult(0);
+                if (lac == Constants.DEFAULT_LAC && cid == Constants.DEFAULT_CID)
+                    param.setResult(0);
             }
         });
 
@@ -146,13 +136,6 @@ public class LocationHook {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 Log.e(TAG, "getBestProvider");
                 param.setResult("gps");
-            }
-        });
-
-        hookMethods("android.location.LocationManager", "getProviders", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                Log.e(TAG, "getProviders");
             }
         });
 
@@ -165,16 +148,44 @@ public class LocationHook {
             }
         });
 
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
-            hookMethod("android.telephony.TelephonyManager", mLpp.classLoader,
-                    "getAllCellInfo", new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            Log.e(TAG, "getAllCellInfo");
-                            param.setResult(null);
-                        }
-                    });
-        }
+        hookMethod(GsmCellLocation.class, "getLac", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(lac);
+            }
+        });
+        hookMethod(GsmCellLocation.class, "getCid", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(cid);
+            }
+        });
+
+        hookMethod(CellIdentityGsm.class, "getLac", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(lac);
+            }
+        });
+        hookMethod(CellIdentityGsm.class, "getCid", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(cid);
+            }
+        });
+
+        hookMethod(CellIdentityLte.class, "getTac", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(lac);
+            }
+        });
+        hookMethod(CellIdentityLte.class, "getCi", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(cid);
+            }
+        });
 
         PhoneStateListenerDelegate.hookPhoneStateListener(lac, cid);
     }

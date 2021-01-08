@@ -23,6 +23,8 @@ public class AppUtil {
                 app.icon = installedPackage.applicationInfo.loadIcon(context.getPackageManager());
                 if (PkgConfig.pkg_dingtalk.equals(app.packageName))
                     apps.add(0, app);
+                else if (PkgConfig.pkg_wechat.equals(app.packageName))
+                    apps.add(apps.size() > 0 && PkgConfig.pkg_dingtalk.equals(apps.get(0).packageName) ? 1 : 0, app);
                 else
                     apps.add(app);
             }

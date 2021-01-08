@@ -8,10 +8,10 @@ android {
     compileSdkVersion 30
     defaultConfig {
         applicationId "com.xposed.hook"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 23
-        versionCode 5
-        versionName "1.1.0"
+        versionCode 6
+        versionName "1.1.1"
     }
     buildTypes {
         release {
@@ -36,5 +36,6 @@ android {
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     compileOnly 'de.robv.android.xposed:api:82'
 }

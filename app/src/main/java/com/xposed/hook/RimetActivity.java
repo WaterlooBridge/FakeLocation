@@ -11,10 +11,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import androidx.annotation.NonNull;
-import com.google.android.material.tabs.TabLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -26,6 +22,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.xposed.hook.config.Constants;
 import com.xposed.hook.config.PkgConfig;
 import com.xposed.hook.entity.AppInfo;
@@ -34,18 +34,12 @@ public class RimetActivity extends AppCompatActivity implements View.OnClickList
 
     private SharedPreferences sp;
 
-    private TabLayout tabLayout;
-    private TabLayout.Tab gpsTab;
-    private TabLayout.Tab cellTab;
-
-    private View ll_gps;
     private EditText etLatitude;
     private EditText etLongitude;
     private TextView tvLatitude;
     private TextView tvLongitude;
     private Button btnAutoFillGps;
 
-    private View ll_cell;
     private EditText etLac;
     private EditText etCid;
     private TextView tvLac;
@@ -83,7 +77,6 @@ public class RimetActivity extends AppCompatActivity implements View.OnClickList
             defaultLongitude = "";
         }
 
-        ll_gps = findViewById(R.id.ll_gps);
         etLatitude = (EditText) findViewById(R.id.et_latitude);
         etLongitude = (EditText) findViewById(R.id.et_longitude);
         tvLatitude = (TextView) findViewById(R.id.tv_latitude);
@@ -93,7 +86,6 @@ public class RimetActivity extends AppCompatActivity implements View.OnClickList
         etLongitude.setText(sp.getString(prefix + "longitude", defaultLongitude));
         btnAutoFillGps.setOnClickListener(this);
 
-        ll_cell = findViewById(R.id.ll_cell);
         etLac = (EditText) findViewById(R.id.et_lac);
         etCid = (EditText) findViewById(R.id.et_cid);
         tvLac = (TextView) findViewById(R.id.tv_lac);
@@ -107,45 +99,12 @@ public class RimetActivity extends AppCompatActivity implements View.OnClickList
             etCid.setText(String.valueOf(cid));
         btnAutoFillCell.setOnClickListener(this);
 
-        initTabLayout();
         cb = (CompoundButton) findViewById(R.id.cb);
         cb.setChecked(sp.getBoolean(appInfo.packageName, false));
         findViewById(R.id.btn_save).setOnClickListener(this);
         findViewById(R.id.btn_reboot_app).setOnClickListener(this);
 
         requestPermissions();
-    }
-
-    private void initTabLayout() {
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        gpsTab = tabLayout.newTab().setText(R.string.gps_location);
-        cellTab = tabLayout.newTab().setText(R.string.cell_location);
-        if (isDingTalk) {
-            tabLayout.addTab(cellTab);
-            tabLayout.addTab(gpsTab);
-            ll_gps.setVisibility(View.GONE);
-        } else {
-            tabLayout.addTab(gpsTab);
-            tabLayout.addTab(cellTab);
-            ll_cell.setVisibility(View.GONE);
-        }
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                ll_gps.setVisibility(tab == gpsTab ? View.VISIBLE : View.GONE);
-                ll_cell.setVisibility(tab == gpsTab ? View.GONE : View.VISIBLE);
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
     }
 
     @Override

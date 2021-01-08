@@ -2,7 +2,7 @@
     <string name="app_name">XposedHook</string>
 
     <string name="gps_location">GPS Location</string>
-    <string name="cell_location">Cell Location</string>
+    <string name="cell_location">Cell Location - Optional</string>
     <string name="current_lac">Current Lac:%1$s</string>
     <string name="current_cid">Current Cid:%1$s</string>
     <string name="current_latitude">Current Latitude:%1$s</string>
