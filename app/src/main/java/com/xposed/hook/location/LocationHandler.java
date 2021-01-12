@@ -73,10 +73,10 @@ public class LocationHandler extends Handler {
         l.setTime(System.currentTimeMillis());
         l.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
         Bundle extraBundle = new Bundle();
-        l.setExtras(extraBundle);
         int svCount = VirtualGPSSatalines.get().getSvCount();
         extraBundle.putInt("satellites", svCount);
         extraBundle.putInt("satellitesvalue", svCount);
+        l.setExtras(extraBundle);
         return l;
     }
 

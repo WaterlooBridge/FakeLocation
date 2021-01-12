@@ -187,7 +187,7 @@ public class LocationHook {
             }
         });
 
-        PhoneStateListenerDelegate.hookPhoneStateListener(lac, cid);
+//        PhoneStateListenerDelegate.hookPhoneStateListener(lac, cid);
     }
 
     //不带参数的方法拦截
