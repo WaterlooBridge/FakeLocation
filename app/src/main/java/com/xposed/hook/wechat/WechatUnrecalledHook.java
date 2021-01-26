@@ -33,8 +33,8 @@ public class WechatUnrecalledHook {
     private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ai";
     private static final String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.storage.ISQLiteDatabase";
     private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.cb";
-    private static final String incMsgLocalIdMethod = "beF";
-    private static final String updateMsgLocalIdMethod = "aB";
+    private static final String incMsgLocalIdMethod = "bkI";
+    private static final String updateMsgLocalIdMethod = "aF";
     private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ca";
 
     private static final boolean mDebug = true;
@@ -142,7 +142,8 @@ public class WechatUnrecalledHook {
                         String sql = param.args[1].toString();
                         Log.e("rawQueryWithFactory", sql + ":" + param.args[3]);
                         Matcher matcher;
-                        if (sql.contains("from SnsInfo") && (matcher = sourceTypePattern.matcher(sql)).find() &&
+                        if (sql.contains("from SnsInfo") && sql.contains("SnsInfo.userName=")
+                                && (matcher = sourceTypePattern.matcher(sql)).find() &&
                                 (matcher = typePattern.matcher(matcher.replaceAll("1=1"))).find()) {
                             param.args[1] = matcher.replaceAll("1=1").replace("snsId >=", "0 !=");
                         }

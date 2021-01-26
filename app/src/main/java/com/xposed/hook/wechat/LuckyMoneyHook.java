@@ -40,11 +40,11 @@ public class LuckyMoneyHook {
 
     private static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     private static final String receiveUIFunctionName = "onSceneEnd";
-    private static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".aj.q";
+    private static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".ak.q";
 
     private static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     private static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
-    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".bq.c";//MicroMsg.PluginHelper
+    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".br.c";//MicroMsg.PluginHelper
     private static final String openUIMethodName = "b";
 
     private static HashSet<String> autoReceiveIds = new HashSet<>();
@@ -61,13 +61,6 @@ public class LuckyMoneyHook {
             XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", "lucky_money");
             delay = preferences.getInt("lucky_money_delay", 0);
             try {
-                XposedHelpers.findAndHookMethod("android.app.Application", mLpp.classLoader, "attach", Context.class, new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        Context context = (Context) param.args[0];
-                        handler = new ToastHandler(context);
-                    }
-                });
                 if (preferences.getBoolean("quick_open", true))
                     XposedHelpers.findAndHookMethod(luckyMoneyReceiveUI, mLpp.classLoader, receiveUIFunctionName, int.class, int.class, String.class, receiveUIParamName, new XC_MethodHook() {
                         @Override
@@ -127,6 +120,8 @@ public class LuckyMoneyHook {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                             launcherUiActivity = new WeakReference<>((Activity) param.thisObject);
+                            if (handler == null)
+                                handler = new ToastHandler(launcherUiActivity.get().getApplicationContext());
                         }
                     });
                 }
