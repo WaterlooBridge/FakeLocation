@@ -40,7 +40,7 @@ public class LuckyMoneyHook {
 
     private static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     private static final String receiveUIFunctionName = "onSceneEnd";
-    private static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".al.q";
+    private static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".am.q";
 
     private static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     private static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";

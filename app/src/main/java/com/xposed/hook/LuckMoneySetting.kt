@@ -13,7 +13,9 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.xposed.hook.theme.AppTheme
 import com.xposed.hook.wechat.LuckyMoneyHook
 
 /**
@@ -42,7 +44,8 @@ class LuckMoneySetting : AppCompatActivity() {
         var autoReceive by remember { mutableStateOf(sp.getBoolean("auto_receive", true)) }
         var recalled by remember { mutableStateOf(sp.getBoolean("recalled", true)) }
         var momentsLimit by remember { mutableStateOf(sp.getBoolean("3_days_Moments", false)) }
-        MaterialTheme(colors = if (isSystemInDarkTheme()) darkColors() else MaterialTheme.colors) {
+        var delay by remember { mutableStateOf(luckyMoneyDelay) }
+        AppTheme {
             Column(modifier = Modifier.padding(start = 15.dp, end = 15.dp)) {
                 Row(
                     modifier = Modifier.height(40.dp),
@@ -97,8 +100,10 @@ class LuckMoneySetting : AppCompatActivity() {
                     })
                 }
                 Spacer(Modifier.height(10.dp))
-                OutlinedTextField(value = luckyMoneyDelay, onValueChange = { luckyMoneyDelay = it },
-                    label = { Text(text = resources.getString(R.string.lucky_money_delay)) })
+                OutlinedTextField(value = delay, onValueChange = {
+                    luckyMoneyDelay = it
+                    delay = it
+                }, label = { Text(text = resources.getString(R.string.lucky_money_delay)) })
                 Spacer(Modifier.height(30.dp))
                 Button(
                     onClick = {
@@ -115,9 +120,9 @@ class LuckMoneySetting : AppCompatActivity() {
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(top = 15.dp, bottom = 15.dp)
+                    contentPadding = PaddingValues(top = 12.dp, bottom = 12.dp)
                 ) {
-                    Text(text = resources.getString(R.string.reboot_app))
+                    Text(text = resources.getString(R.string.reboot_app), color = Color.White)
                 }
             }
         }
