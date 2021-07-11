@@ -1,7 +1,8 @@
 package com.xposed.hook.location;
 
-import android.content.Context;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationManager;
 import android.telephony.CellIdentityGsm;
 import android.telephony.CellIdentityLte;
 import android.telephony.gsm.GsmCellLocation;
@@ -13,6 +14,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -27,42 +29,30 @@ public class LocationHook {
 
     public static void hookAndChange(XC_LoadPackage.LoadPackageParam mLpp, final double latitude, final double longitude, final int lac, final int cid) {
 
-        Log.e(TAG, "Avalon Hook Location Test: " + mLpp.packageName);
+        Log.d(TAG, "Avalon Hook Location Test: " + mLpp.packageName);
         LocationHandler.latitude = latitude;
         LocationHandler.longitude = longitude;
 
-        hookMethod("android.content.ContextWrapper", mLpp.classLoader, "getApplicationContext", new XC_MethodHook() {
+        hookMethod("android.net.wifi.WifiManager", mLpp.classLoader, "getScanResults", new XC_MethodHook() {
             @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                LocationHandler.getInstance().attach((Context) param.getResult());
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(null);
             }
         });
 
-        hookMethod("android.net.wifi.WifiManager", mLpp.classLoader, "getScanResults",
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param)
-                            throws Throwable {
-                        param.setResult(null);
-                    }
-                });
+        hookMethod("android.telephony.TelephonyManager", mLpp.classLoader, "getNeighboringCellInfo", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(null);
+            }
+        });
 
-        hookMethod("android.telephony.TelephonyManager", mLpp.classLoader, "getNeighboringCellInfo",
-                new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param)
-                            throws Throwable {
-                        param.setResult(null);
-                    }
-                });
-
-        hookMethods("android.location.LocationManager", "requestLocationUpdates",
-                new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        LocationHandler.getInstance().start();
-                    }
-                });
+        hookMethods("android.location.LocationManager", "requestLocationUpdates", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                LocationHandler.getInstance().start();
+            }
+        });
 
         hookMethod("android.location.LocationManager", mLpp.classLoader, "getLastLocation", new XC_MethodHook() {
             @Override
@@ -85,20 +75,6 @@ public class LocationHook {
                     param.setResult(l);
                 } else
                     param.setResult(LocationHandler.createLocation(latitude, longitude));
-            }
-        });
-
-        hookMethod("android.location.Location", mLpp.classLoader, "getLatitude", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(latitude);
-            }
-        });
-
-        hookMethod("android.location.Location", mLpp.classLoader, "getLongitude", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(longitude);
             }
         });
 
@@ -131,18 +107,13 @@ public class LocationHook {
             }
         });
 
-        hookMethods("android.location.LocationManager", "getBestProvider", new XC_MethodHook() {
+        hookMethod(Location.class, "getLatitude", XC_MethodReplacement.returnConstant(latitude));
+        hookMethod(Location.class, "getLongitude", XC_MethodReplacement.returnConstant(longitude));
+        hookMethod(LocationManager.class, "getBestProvider", Criteria.class, boolean.class, XC_MethodReplacement.returnConstant("gps"));
+        hookMethod(LocationManager.class, "isProviderEnabled", String.class, new XC_MethodHook() {
             @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                Log.e(TAG, "getBestProvider");
-                param.setResult("gps");
-            }
-        });
-
-        hookMethods("android.location.LocationManager", "isProviderEnabled", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                Log.e(TAG, "isProviderEnabled: " + param.args[0]);
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                Log.d(TAG, "isProviderEnabled: " + param.args[0]);
                 if ("gps".equals(param.args[0]))
                     param.setResult(true);
             }
@@ -195,7 +166,7 @@ public class LocationHook {
         try {
             XposedHelpers.findAndHookMethod(clazz, methodName, parameterTypesAndCallback);
         } catch (Throwable e) {
-            Log.e(TAG, e.toString());
+            Log.d(TAG, e.toString());
         }
     }
 
@@ -205,7 +176,7 @@ public class LocationHook {
         try {
             XposedHelpers.findAndHookMethod(className, classLoader, methodName, parameterTypesAndCallback);
         } catch (Throwable e) {
-            Log.e(TAG, e.toString());
+            Log.d(TAG, e.toString());
         }
     }
 
@@ -221,7 +192,7 @@ public class LocationHook {
                     XposedBridge.hookMethod(method, xmh);
                 }
         } catch (Throwable e) {
-            Log.e(TAG, e.toString());
+            Log.d(TAG, e.toString());
         }
     }
 

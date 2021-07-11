@@ -19,7 +19,7 @@ public class Main implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        Log.e("***********************", loadPackageParam.packageName);
+        Log.d("***********************", loadPackageParam.packageName);
         LuckyMoneyHook.hook(loadPackageParam);
         XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", Constants.PREF_FILE_NAME);
         if (preferences.getBoolean(loadPackageParam.packageName, false)) {

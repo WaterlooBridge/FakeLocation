@@ -4,39 +4,42 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import mirror.RefMethod;
+
 /**
  * @author Lody
  */
 public class MockLocationHelper {
 
     public static void invokeNmeaReceived(Object listener) {
-        if (listener != null) {
-            VirtualGPSSatalines satalines = VirtualGPSSatalines.get();
-            try {
-                String date = new SimpleDateFormat("HHmmss:SS", Locale.US).format(new Date());
-                String lat = getGPSLat(LocationHandler.latitude);
-                String lon = getGPSLat(LocationHandler.longitude);
-                String latNW = getNorthWest(LocationHandler.latitude);
-                String lonSE = getSouthEast(LocationHandler.longitude);
-                String $GPGGA = checksum(String.format("$GPGGA,%s,%s,%s,%s,%s,1,%s,692,.00,M,.00,M,,,", date, lat, latNW, lon, lonSE, satalines.getSvCount()));
-                String $GPRMC = checksum(String.format("$GPRMC,%s,A,%s,%s,%s,%s,0,0,260717,,,A,", date, lat, latNW, lon, lonSE));
-                if (LocationManager.GnssStatusListenerTransport.onNmeaReceived != null) {
-                    LocationManager.GnssStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), "$GPGSV,1,1,04,12,05,159,36,15,41,087,15,19,38,262,30,31,56,146,19,*73");
-                    LocationManager.GnssStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), $GPGGA);
-                    LocationManager.GnssStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), "$GPVTG,0,T,0,M,0,N,0,K,A,*25");
-                    LocationManager.GnssStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), $GPRMC);
-                    LocationManager.GnssStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), "$GPGSA,A,2,12,15,19,31,,,,,,,,,604,712,986,*27");
-                } else if (LocationManager.GpsStatusListenerTransport.onNmeaReceived != null) {
-                    LocationManager.GpsStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), "$GPGSV,1,1,04,12,05,159,36,15,41,087,15,19,38,262,30,31,56,146,19,*73");
-                    LocationManager.GpsStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), $GPGGA);
-                    LocationManager.GpsStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), "$GPVTG,0,T,0,M,0,N,0,K,A,*25");
-                    LocationManager.GpsStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), $GPRMC);
-                    LocationManager.GpsStatusListenerTransport.onNmeaReceived.call(listener, System.currentTimeMillis(), "$GPGSA,A,2,12,15,19,31,,,,,,,,,604,712,986,*27");
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
+        if (listener == null)
+            return;
+        RefMethod<Void> method;
+        if (LocationManager.GnssStatusListener.onNmeaReceived != null)
+            method = LocationManager.GnssStatusListener.onNmeaReceived;
+        else if (LocationManager.GnssStatusListenerTransport.onNmeaReceived != null)
+            method = LocationManager.GnssStatusListenerTransport.onNmeaReceived;
+        else
+            method = LocationManager.GpsStatusListenerTransport.onNmeaReceived;
+        if (method == null)
+            return;
+        VirtualGPSSatalines satalines = VirtualGPSSatalines.get();
+        String date = new SimpleDateFormat("HHmmss:SS", Locale.US).format(new Date());
+        String lat = getGPSLat(LocationHandler.latitude);
+        String lon = getGPSLat(LocationHandler.longitude);
+        String latNW = getNorthWest(LocationHandler.latitude);
+        String lonSE = getSouthEast(LocationHandler.longitude);
+        String $GPGGA = checksum(String.format("$GPGGA,%s,%s,%s,%s,%s,1,%s,692,.00,M,.00,M,,,", date, lat, latNW, lon, lonSE, satalines.getSvCount()));
+        String $GPRMC = checksum(String.format("$GPRMC,%s,A,%s,%s,%s,%s,0,0,260717,,,A,", date, lat, latNW, lon, lonSE));
+        callNmeaReceived(method, listener, "$GPGSV,1,1,04,12,05,159,36,15,41,087,15,19,38,262,30,31,56,146,19,*73");
+        callNmeaReceived(method, listener, $GPGGA);
+        callNmeaReceived(method, listener, "$GPVTG,0,T,0,M,0,N,0,K,A,*25");
+        callNmeaReceived(method, listener, $GPRMC);
+        callNmeaReceived(method, listener, "$GPGSA,A,2,12,15,19,31,,,,,,,,,604,712,986,*27");
+    }
+
+    private static void callNmeaReceived(RefMethod<Void> method, Object listener, String nmea) {
+        method.call(listener, System.currentTimeMillis(), nmea);
     }
 
     private static String getSouthEast(double longitude) {

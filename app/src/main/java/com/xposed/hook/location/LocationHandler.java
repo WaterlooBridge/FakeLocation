@@ -13,6 +13,9 @@ import android.util.Log;
 import java.util.Map;
 import java.util.Set;
 
+import de.robv.android.xposed.XposedHelpers;
+import mirror.RefMethod;
+
 /**
  * Created by lin on 2017/8/6.
  */
@@ -38,27 +41,21 @@ public class LocationHandler extends Handler {
         super(Looper.getMainLooper());
     }
 
-    public void attach(Context context) {
-        this.context = context;
+    public Context requireContext() throws ClassNotFoundException {
+        if (context != null)
+            return context;
+        context = (Context) XposedHelpers.callStaticMethod(Class.forName("android.app.ActivityThread"), "currentApplication");
+        return context;
     }
 
     @Override
     public void handleMessage(Message msg) {
         try {
-            Object transport = context.getSystemService(Context.LOCATION_SERVICE);
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    notifyMNmeaListener(LocationManager.mGnssNmeaListeners.get(transport));
-                    notifyMNmeaListener(LocationManager.mGpsNmeaListeners.get(transport));
-                } else {
-                    notifyMNmeaListener(LocationManager.mNmeaListeners.get(transport));
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+            Object transport = requireContext().getSystemService(Context.LOCATION_SERVICE);
+            notifyNmeaReceived(transport);
             notifyLocation(LocationManager.mListeners.get(transport));
             sendEmptyMessageDelayed(0, 10000);
-            Log.e(LocationHook.TAG, "Avalon Hook Location Success");
+            Log.d(LocationHook.TAG, "Avalon Hook Location Success");
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -68,7 +65,7 @@ public class LocationHandler extends Handler {
         Location l = new Location(android.location.LocationManager.GPS_PROVIDER);
         l.setLatitude(latitude);
         l.setLongitude(longitude);
-        l.setAccuracy(8f);
+        l.setAccuracy((float) Math.random() + 8);
         l.setBearing((int) (360 * Math.random()));
         l.setTime(System.currentTimeMillis());
         l.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
@@ -93,41 +90,58 @@ public class LocationHandler extends Handler {
     }
 
     private void notifyLocation(Map listeners) {
-        if (listeners != null && !listeners.isEmpty()) {
-            Location location = createLocation(latitude, longitude);
-            //noinspection unchecked
-            Set<Map.Entry> entries = listeners.entrySet();
-            for (Map.Entry entry : entries) {
-                Object value = entry.getValue();
-                if (value != null) {
-                    try {
-                        Log.e(LocationHook.TAG, value.toString());
-                        if (LocationManager.ListenerTransport.onLocationChanged != null)
-                            LocationManager.ListenerTransport.onLocationChanged.call(value, location);
-                        else if (LocationManager.LocationListenerTransport.onLocationChanged != null)
-                            LocationManager.LocationListenerTransport.onLocationChanged.call(value, location);
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+        if (listeners == null || listeners.isEmpty())
+            return;
+        Location location = createLocation(latitude, longitude);
+        //noinspection unchecked
+        Set<Map.Entry> entries = listeners.entrySet();
+        RefMethod<Void> method;
+        if (LocationManager.ListenerTransport.onLocationChanged != null)
+            method = LocationManager.ListenerTransport.onLocationChanged;
+        else
+            method = LocationManager.LocationListenerTransport.onLocationChanged;
+        if (method == null)
+            return;
+        for (Map.Entry entry : entries) {
+            Object value = entry.getValue();
+            if (value == null)
+                continue;
+            method.call(value, location);
         }
     }
 
-    private void notifyMNmeaListener(Map listeners) {
+    private void notifyNmeaReceived(Object transport) {
+        try {
+            if (LocationManager.mGnssStatusListenerManager != null) {
+                Object manager = LocationManager.mGnssStatusListenerManager.get(transport);
+                notifyNmeaListener(LocationManager.GnssStatusListenerManager.mListenerTransport.get(manager));
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                notifyNmeaListener(LocationManager.mGnssNmeaListeners.get(transport));
+                notifyNmeaListener(LocationManager.mGpsNmeaListeners.get(transport));
+            } else {
+                notifyNmeaListener(LocationManager.mNmeaListeners.get(transport));
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void notifyNmeaListener(Map listeners) {
         if (listeners != null && !listeners.isEmpty()) {
             //noinspection unchecked
             Set<Map.Entry> entries = listeners.entrySet();
-            for (Map.Entry entry : entries) {
-                try {
-                    Object value = entry.getValue();
-                    if (value != null) {
-                        MockLocationHelper.invokeNmeaReceived(value);
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
+            for (Map.Entry entry : entries)
+                notifyNmeaListener(entry.getValue());
+        }
+    }
+
+    private void notifyNmeaListener(Object object) {
+        if (object == null)
+            return;
+        try {
+            MockLocationHelper.invokeNmeaReceived(object);
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 
