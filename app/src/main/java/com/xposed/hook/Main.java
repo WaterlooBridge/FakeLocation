@@ -19,17 +19,20 @@ public class Main implements IXposedHookLoadPackage {
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        Log.d("***********************", loadPackageParam.packageName);
+        Log.d("***********************", loadPackageParam.processName);
+        String packageName = loadPackageParam.processName;
+        if (packageName.contains(":"))
+            packageName = loadPackageParam.packageName;
         LuckyMoneyHook.hook(loadPackageParam);
         XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", Constants.PREF_FILE_NAME);
-        if (preferences.getBoolean(loadPackageParam.packageName, false)) {
+        if (preferences.getBoolean(packageName, false)) {
             String defaultLatitude = Constants.DEFAULT_LATITUDE;
             String defaultLongitude = Constants.DEFAULT_LONGITUDE;
-            if (PkgConfig.pkg_dingtalk.equals(loadPackageParam.packageName)) {
+            if (PkgConfig.pkg_dingtalk.equals(packageName)) {
                 defaultLatitude = "0";
                 defaultLongitude = "0";
             }
-            String prefix = loadPackageParam.packageName + "_";
+            String prefix = packageName + "_";
             double latitude = 0;
             double longitude = 0;
             try {

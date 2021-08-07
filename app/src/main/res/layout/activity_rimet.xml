@@ -187,5 +187,10 @@
 
         </LinearLayout>
 
+        <androidx.constraintlayout.utils.widget.ImageFilterView
+            android:id="@+id/iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

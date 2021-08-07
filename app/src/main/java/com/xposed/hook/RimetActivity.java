@@ -110,36 +110,32 @@ public class RimetActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        switch (id) {
-            case R.id.btn_auto_fill_cell:
-                etLac.setText(String.valueOf(l.getLac()));
-                etCid.setText(String.valueOf(l.getCid()));
-                break;
-            case R.id.btn_auto_fill_gps:
-                etLatitude.setText(String.valueOf(gpsL.getLatitude()));
-                etLongitude.setText(String.valueOf(gpsL.getLongitude()));
-                break;
-            case R.id.btn_save:
-                String prefix = appInfo.packageName + "_";
-                sp.edit().putString(prefix + "latitude", etLatitude.getText().toString())
-                        .putString(prefix + "longitude", etLongitude.getText().toString())
-                        .putInt(prefix + "lac", parseInt(etLac.getText().toString()))
-                        .putInt(prefix + "cid", parseInt(etCid.getText().toString()))
-                        .putBoolean(appInfo.packageName, cb.isChecked())
-                        .commit();
-                Toast.makeText(getApplicationContext(), R.string.save_success, Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.btn_reboot_app:
-                try {
-                    Intent intent = new Intent();
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    intent.setData(Uri.fromParts("package", appInfo.packageName, null));
-                    startActivity(intent);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
+        if (id == R.id.btn_auto_fill_cell) {
+            etLac.setText(String.valueOf(l.getLac()));
+            etCid.setText(String.valueOf(l.getCid()));
+        } else if (id == R.id.btn_auto_fill_gps) {
+            etLatitude.setText(String.valueOf(gpsL.getLatitude()));
+            etLongitude.setText(String.valueOf(gpsL.getLongitude()));
+        } else if (id == R.id.btn_save) {
+            String prefix = appInfo.packageName + "_";
+            sp.edit().putString(prefix + "latitude", etLatitude.getText().toString())
+                    .putString(prefix + "longitude", etLongitude.getText().toString())
+                    .putInt(prefix + "lac", parseInt(etLac.getText().toString()))
+                    .putInt(prefix + "cid", parseInt(etCid.getText().toString()))
+                    .putLong(prefix + "time", System.currentTimeMillis())
+                    .putBoolean(appInfo.packageName, cb.isChecked())
+                    .apply();
+            Toast.makeText(getApplicationContext(), R.string.save_success, Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.btn_reboot_app) {
+            try {
+                Intent intent = new Intent();
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.fromParts("package", appInfo.packageName, null));
+                startActivity(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -44,7 +44,7 @@ public class LuckyMoneyHook {
 
     private static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     private static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
-    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".by.c";//MicroMsg.PluginHelper
+    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".by.d";//MicroMsg.PluginHelper
     private static final String openUIMethodName = "b";
 
     private static HashSet<String> autoReceiveIds = new HashSet<>();
@@ -61,7 +61,7 @@ public class LuckyMoneyHook {
             XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", "lucky_money");
             delay = preferences.getInt("lucky_money_delay", 0);
             try {
-                if (preferences.getBoolean("quick_open", true))
+                if (preferences.getBoolean("quick_open", false))
                     XposedHelpers.findAndHookMethod(luckyMoneyReceiveUI, mLpp.classLoader, receiveUIFunctionName, int.class, int.class, String.class, receiveUIParamName, new XC_MethodHook() {
                         @Override
                         protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -75,7 +75,7 @@ public class LuckyMoneyHook {
                             }
                         }
                     });
-                if (preferences.getBoolean("auto_receive", true)) {
+                if (preferences.getBoolean("auto_receive", false)) {
                     XposedHelpers.findAndHookMethod(WechatUnrecalledHook.SQLiteDatabaseClass, mLpp.classLoader, "insert", String.class, String.class, ContentValues.class, new XC_MethodHook() {
                         @Override
                         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -128,7 +128,7 @@ public class LuckyMoneyHook {
             } catch (Throwable e) {
                 XposedBridge.log(e);
             }
-            if (preferences.getBoolean("recalled", true))
+            if (preferences.getBoolean("recalled", false))
                 new WechatUnrecalledHook(WECHAT_PACKAGE_NAME).hook(mLpp.classLoader);
             if (preferences.getBoolean("3_days_Moments", false))
                 WechatUnrecalledHook.hook3DaysMoments(mLpp.classLoader);

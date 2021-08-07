@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
-ext.compose_version = '1.0.0-rc01'
+ext.compose_version = '1.0.0'
 
 static def releaseAppName() {
     return "FakeLocation"
@@ -13,8 +13,8 @@ android {
         applicationId "com.xposed.hook"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 7
-        versionName "1.1.2"
+        versionCode 8
+        versionName "1.2.0"
     }
     buildTypes {
         release {
@@ -67,7 +67,7 @@ dependencies {
     implementation "androidx.compose.material:material-icons-core:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
     // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.3.0-rc01'
+    implementation 'androidx.activity:activity-compose:1.3.0'
     // Integration with ViewModels
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07'
     // Integration with observables

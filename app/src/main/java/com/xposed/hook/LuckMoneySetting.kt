@@ -7,13 +7,16 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Switch
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.xposed.hook.theme.AppTheme
 import com.xposed.hook.wechat.LuckyMoneyHook
@@ -40,9 +43,9 @@ class LuckMoneySetting : AppCompatActivity() {
 
     @Composable
     fun LuckyMoney() {
-        var quickOpen by remember { mutableStateOf(sp.getBoolean("quick_open", true)) }
-        var autoReceive by remember { mutableStateOf(sp.getBoolean("auto_receive", true)) }
-        var recalled by remember { mutableStateOf(sp.getBoolean("recalled", true)) }
+        var quickOpen by remember { mutableStateOf(sp.getBoolean("quick_open", false)) }
+        var autoReceive by remember { mutableStateOf(sp.getBoolean("auto_receive", false)) }
+        var recalled by remember { mutableStateOf(sp.getBoolean("recalled", false)) }
         var momentsLimit by remember { mutableStateOf(sp.getBoolean("3_days_Moments", false)) }
         var delay by remember { mutableStateOf(luckyMoneyDelay) }
         AppTheme {
@@ -52,7 +55,7 @@ class LuckMoneySetting : AppCompatActivity() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = resources.getString(R.string.quick_open_lucky_money),
+                        text = stringResource(R.string.quick_open_lucky_money),
                         modifier = Modifier.weight(1f)
                     )
                     Switch(quickOpen, {
@@ -65,7 +68,7 @@ class LuckMoneySetting : AppCompatActivity() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = resources.getString(R.string.show_lucky_money_coming_toast),
+                        text = stringResource(R.string.show_lucky_money_coming_toast),
                         modifier = Modifier.weight(1f)
                     )
                     Switch(autoReceive, {
@@ -78,7 +81,7 @@ class LuckMoneySetting : AppCompatActivity() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = resources.getString(R.string.prevent_message_recalled),
+                        text = stringResource(R.string.prevent_message_recalled),
                         modifier = Modifier.weight(1f)
                     )
                     Switch(recalled, {
@@ -91,7 +94,7 @@ class LuckMoneySetting : AppCompatActivity() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = resources.getString(R.string.disable_3_days_of_Moments_limit),
+                        text = stringResource(R.string.disable_3_days_of_Moments_limit),
                         modifier = Modifier.weight(1f)
                     )
                     Switch(momentsLimit, {
@@ -103,7 +106,7 @@ class LuckMoneySetting : AppCompatActivity() {
                 OutlinedTextField(value = delay, onValueChange = {
                     luckyMoneyDelay = it
                     delay = it
-                }, label = { Text(text = resources.getString(R.string.lucky_money_delay)) })
+                }, label = { Text(text = stringResource(R.string.lucky_money_delay)) })
                 Spacer(Modifier.height(30.dp))
                 Button(
                     onClick = {
@@ -122,7 +125,7 @@ class LuckMoneySetting : AppCompatActivity() {
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(top = 12.dp, bottom = 12.dp)
                 ) {
-                    Text(text = resources.getString(R.string.reboot_app), color = Color.White)
+                    Text(text = stringResource(R.string.reboot_app), color = Color.White)
                 }
             }
         }
