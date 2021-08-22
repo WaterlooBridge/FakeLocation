@@ -25,7 +25,7 @@ object AppHelper {
         val apps = ArrayList<AppInfo>()
         val pm = App.current.packageManager
         val sp =
-            App.current.getSharedPreferences(Constants.PREF_FILE_NAME, Context.MODE_WORLD_READABLE)
+            App.current.getSharedPreferences(Constants.PREF_FILE_NAME, Context.MODE_PRIVATE)
         val installedPackages = pm.getInstalledPackages(0)
         for (installedPackage in installedPackages) {
             if (installedPackage.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0) {

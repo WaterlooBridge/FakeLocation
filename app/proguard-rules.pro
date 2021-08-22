@@ -23,3 +23,8 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class mirror.** {*;}
+-keep class com.xposed.hook.Main {*;}
+-keep class com.xposed.hook.location.** {*;}
+-keep class androidx.core.content.FileProvider {*;}

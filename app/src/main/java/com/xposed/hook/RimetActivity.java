@@ -69,7 +69,7 @@ public class RimetActivity extends AppCompatActivity implements View.OnClickList
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         String prefix = appInfo.packageName + "_";
-        sp = getSharedPreferences(Constants.PREF_FILE_NAME, MODE_WORLD_READABLE);
+        sp = getSharedPreferences(Constants.PREF_FILE_NAME, MODE_PRIVATE);
         String defaultLatitude = Constants.DEFAULT_LATITUDE;
         String defaultLongitude = Constants.DEFAULT_LONGITUDE;
         if (isDingTalk) {

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.xposed.hook.location.LocationHook;
+import com.xposed.hook.storage.XSharedPreferences;
 import com.xposed.hook.utils.XmlToJson;
 
 import org.json.JSONObject;
@@ -22,7 +23,6 @@ import java.lang.ref.WeakReference;
 import java.util.HashSet;
 
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -56,83 +56,82 @@ public class LuckyMoneyHook {
     private static int delay;
 
     public static void hook(final XC_LoadPackage.LoadPackageParam mLpp) {
-        if (WECHAT_PACKAGE_NAME.equals(mLpp.packageName)) {
-            disableTinker(mLpp);
-            XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", "lucky_money");
-            delay = preferences.getInt("lucky_money_delay", 0);
-            try {
-                if (preferences.getBoolean("quick_open", false))
-                    XposedHelpers.findAndHookMethod(luckyMoneyReceiveUI, mLpp.classLoader, receiveUIFunctionName, int.class, int.class, String.class, receiveUIParamName, new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            try {
-                                Button button = (Button) XposedHelpers.findFirstFieldByExactType(param.thisObject.getClass(), Button.class).get(param.thisObject);
-                                if (button.isShown() && button.isClickable()) {
-                                    button.performClick();
-                                }
-                            } catch (Throwable e) {
-                                Log.e(LocationHook.TAG, e.toString());
+        if (!WECHAT_PACKAGE_NAME.equals(mLpp.processName) || !WECHAT_PACKAGE_NAME.equals(mLpp.packageName))
+            return;
+        XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", "lucky_money");
+        delay = preferences.getInt("lucky_money_delay", 0);
+        try {
+            if (preferences.getBoolean("quick_open", false))
+                XposedHelpers.findAndHookMethod(luckyMoneyReceiveUI, mLpp.classLoader, receiveUIFunctionName, int.class, int.class, String.class, receiveUIParamName, new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        try {
+                            Button button = (Button) XposedHelpers.findFirstFieldByExactType(param.thisObject.getClass(), Button.class).get(param.thisObject);
+                            if (button.isShown() && button.isClickable()) {
+                                button.performClick();
                             }
+                        } catch (Throwable e) {
+                            Log.e(LocationHook.TAG, e.toString());
                         }
-                    });
-                if (preferences.getBoolean("auto_receive", false)) {
-                    XposedHelpers.findAndHookMethod(WechatUnrecalledHook.SQLiteDatabaseClass, mLpp.classLoader, "insert", String.class, String.class, ContentValues.class, new XC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                            ContentValues contentValues = (ContentValues) param.args[2];
-                            String tableName = (String) param.args[0];
-                            if (TextUtils.isEmpty(tableName) || !tableName.equals("message")) {
-                                return;
-                            }
-                            Integer type = contentValues.getAsInteger("type");
-                            if (null == type) {
-                                return;
-                            }
-                            Long id = contentValues.getAsLong("msgId");
-                            if (id != null) {
-                                if (id == msgId)
-                                    XposedBridge.log("wechat msg:" + contentValues.getAsString("content"));
-                                msgId = id;
-                            }
-                            if (handler != null && (type == 436207665 || type == 469762097)) {
-                                handler.obtainMessage(0, "Lucky Money is Coming").sendToTarget();
-                                openLuckyMoneyReceiveUI(contentValues, mLpp);
-                            }
+                    }
+                });
+            if (preferences.getBoolean("auto_receive", false)) {
+                XposedHelpers.findAndHookMethod(WechatUnrecalledHook.SQLiteDatabaseClass, mLpp.classLoader, "insert", String.class, String.class, ContentValues.class, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        ContentValues contentValues = (ContentValues) param.args[2];
+                        String tableName = (String) param.args[0];
+                        if (TextUtils.isEmpty(tableName) || !tableName.equals("message")) {
+                            return;
                         }
-                    });
-                    XposedHelpers.findAndHookMethod(chatRoomInfoUI, mLpp.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            if (handler != null) {
-                                Activity activity = (Activity) param.thisObject;
-                                String wechatId = activity.getIntent().getStringExtra("RoomInfo_Id");
-                                String status = "Opened";
-                                if (autoReceiveIds.contains(wechatId)) {
-                                    autoReceiveIds.remove(wechatId);
-                                    status = "Closed";
-                                } else
-                                    autoReceiveIds.add(wechatId);
-                                handler.obtainMessage(0, "Group Chat ID:" + wechatId + ",Auto Open LuckyMoneyReceiveUI " + status).sendToTarget();
-                            }
+                        Integer type = contentValues.getAsInteger("type");
+                        if (null == type) {
+                            return;
                         }
-                    });
-                    XposedHelpers.findAndHookMethod(launcherUI, mLpp.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            launcherUiActivity = new WeakReference<>((Activity) param.thisObject);
-                            if (handler == null)
-                                handler = new ToastHandler(launcherUiActivity.get().getApplicationContext());
+                        Long id = contentValues.getAsLong("msgId");
+                        if (id != null) {
+                            if (id == msgId)
+                                XposedBridge.log("wechat msg:" + contentValues.getAsString("content"));
+                            msgId = id;
                         }
-                    });
-                }
-            } catch (Throwable e) {
-                XposedBridge.log(e);
+                        if (handler != null && (type == 436207665 || type == 469762097)) {
+                            handler.obtainMessage(0, "Lucky Money is Coming").sendToTarget();
+                            openLuckyMoneyReceiveUI(contentValues, mLpp);
+                        }
+                    }
+                });
+                XposedHelpers.findAndHookMethod(chatRoomInfoUI, mLpp.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (handler != null) {
+                            Activity activity = (Activity) param.thisObject;
+                            String wechatId = activity.getIntent().getStringExtra("RoomInfo_Id");
+                            String status = "Opened";
+                            if (autoReceiveIds.contains(wechatId)) {
+                                autoReceiveIds.remove(wechatId);
+                                status = "Closed";
+                            } else
+                                autoReceiveIds.add(wechatId);
+                            handler.obtainMessage(0, "Group Chat ID:" + wechatId + ",Auto Open LuckyMoneyReceiveUI " + status).sendToTarget();
+                        }
+                    }
+                });
+                XposedHelpers.findAndHookMethod(launcherUI, mLpp.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        launcherUiActivity = new WeakReference<>((Activity) param.thisObject);
+                        if (handler == null)
+                            handler = new ToastHandler(launcherUiActivity.get().getApplicationContext());
+                    }
+                });
             }
-            if (preferences.getBoolean("recalled", false))
-                new WechatUnrecalledHook(WECHAT_PACKAGE_NAME).hook(mLpp.classLoader);
-            if (preferences.getBoolean("3_days_Moments", false))
-                WechatUnrecalledHook.hook3DaysMoments(mLpp.classLoader);
+        } catch (Throwable e) {
+            XposedBridge.log(e);
         }
+        if (preferences.getBoolean("recalled", false))
+            new WechatUnrecalledHook(WECHAT_PACKAGE_NAME).hook(mLpp.classLoader);
+        if (preferences.getBoolean("3_days_Moments", false))
+            WechatUnrecalledHook.hook3DaysMoments(mLpp.classLoader);
     }
 
     private static void openLuckyMoneyReceiveUI(ContentValues contentValues, XC_LoadPackage.LoadPackageParam lpparam) {

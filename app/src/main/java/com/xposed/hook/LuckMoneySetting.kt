@@ -33,7 +33,7 @@ class LuckMoneySetting : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTitle(R.string.wechat_hook)
 
-        sp = getSharedPreferences("lucky_money", MODE_WORLD_READABLE)
+        sp = getSharedPreferences("lucky_money", MODE_PRIVATE)
         luckyMoneyDelay = sp.getInt("lucky_money_delay", 0).toString()
 
         setContent {

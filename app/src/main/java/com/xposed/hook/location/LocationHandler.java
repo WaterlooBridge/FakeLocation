@@ -57,7 +57,7 @@ public class LocationHandler extends Handler {
             sendEmptyMessageDelayed(0, 10000);
             Log.d(LocationHook.TAG, "Avalon Hook Location Success");
         } catch (Throwable e) {
-            e.printStackTrace();
+            Log.d(LocationHook.TAG, e.toString(), e);
         }
     }
 
