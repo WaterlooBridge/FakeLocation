@@ -33,8 +33,8 @@ public class WechatUnrecalledHook {
     private static final String storageClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.ak";
     private static final String storageMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".sdk.storage.ISQLiteDatabase";
     private static final String incMsgLocalIdClass = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.cd";
-    private static final String incMsgLocalIdMethod = "cqo";
-    private static final String updateMsgLocalIdMethod = "bo";
+    private static final String incMsgLocalIdMethod = "cue";
+    private static final String updateMsgLocalIdMethod = "bt";
     private static final String updateMsgLocalIdMethodParam = LuckyMoneyHook.WECHAT_PACKAGE_NAME + ".storage.cc";
 
     private static final boolean mDebug = true;
