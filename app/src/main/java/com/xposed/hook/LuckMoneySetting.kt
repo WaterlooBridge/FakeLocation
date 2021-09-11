@@ -8,6 +8,7 @@ import android.provider.Settings
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Switch
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.xposed.hook.theme.AppTheme
 import com.xposed.hook.wechat.LuckyMoneyHook
@@ -106,7 +108,8 @@ class LuckMoneySetting : AppCompatActivity() {
                 OutlinedTextField(value = delay, onValueChange = {
                     luckyMoneyDelay = it
                     delay = it
-                }, label = { Text(text = stringResource(R.string.lucky_money_delay)) })
+                }, label = { Text(text = stringResource(R.string.lucky_money_delay)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
                 Spacer(Modifier.height(30.dp))
                 Button(
                     onClick = {

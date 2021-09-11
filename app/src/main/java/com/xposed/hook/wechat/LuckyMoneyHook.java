@@ -170,7 +170,9 @@ public class LuckyMoneyHook {
         }
     }
 
-    private static void disableTinker(XC_LoadPackage.LoadPackageParam lpparam) {
+    public static void disableTinker(XC_LoadPackage.LoadPackageParam lpparam) {
+        if (!WECHAT_PACKAGE_NAME.equals(lpparam.processName) || !WECHAT_PACKAGE_NAME.equals(lpparam.packageName))
+            return;
         try {
             XposedHelpers.findAndHookMethod(tinkerEnableClass, lpparam.classLoader, tinkerEnableMethodName, int.class, new XC_MethodHook() {
                 @Override
