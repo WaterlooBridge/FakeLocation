@@ -44,7 +44,7 @@ public class LuckyMoneyHook {
 
     private static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     private static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
-    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".bw.d";//MicroMsg.PluginHelper
+    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".bv.c";//MicroMsg.PluginHelper
     private static final String openUIMethodName = "b";
 
     private static HashSet<String> autoReceiveIds = new HashSet<>();
