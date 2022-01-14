@@ -40,11 +40,11 @@ public class LuckyMoneyHook {
 
     private static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     private static final String receiveUIFunctionName = "onSceneEnd";
-    private static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".al.p";
+    private static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".ao.p";
 
     private static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     private static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
-    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".bx.c";//MicroMsg.PluginHelper
+    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".bz.c";//MicroMsg.PluginHelper
     private static final String openUIMethodName = "b";
 
     private static HashSet<String> autoReceiveIds = new HashSet<>();
@@ -171,7 +171,7 @@ public class LuckyMoneyHook {
     }
 
     public static void disableTinker(XC_LoadPackage.LoadPackageParam lpparam) {
-        if (!WECHAT_PACKAGE_NAME.equals(lpparam.processName) || !WECHAT_PACKAGE_NAME.equals(lpparam.packageName))
+        if (!WECHAT_PACKAGE_NAME.equals(lpparam.packageName))
             return;
         try {
             XposedHelpers.findAndHookMethod(tinkerEnableClass, lpparam.classLoader, tinkerEnableMethodName, int.class, new XC_MethodHook() {
