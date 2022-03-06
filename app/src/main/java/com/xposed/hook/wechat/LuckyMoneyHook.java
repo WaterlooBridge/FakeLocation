@@ -1,8 +1,8 @@
 package com.xposed.hook.wechat;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +20,7 @@ import com.xposed.hook.utils.XmlToJson;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -40,14 +41,13 @@ public class LuckyMoneyHook {
 
     private static final String luckyMoneyReceiveUI = WECHAT_PACKAGE_NAME + ".plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI";
     private static final String receiveUIFunctionName = "onSceneEnd";
-    private static final String receiveUIParamName = WECHAT_PACKAGE_NAME + ".ao.p";
 
     private static final String chatRoomInfoUI = WECHAT_PACKAGE_NAME + ".chatroom.ui.ChatroomInfoUI";
     private static final String launcherUI = WECHAT_PACKAGE_NAME + ".ui.LauncherUI";
-    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".bz.c";//MicroMsg.PluginHelper
+    private static final String openUIClass = WECHAT_PACKAGE_NAME + ".br.c";//MicroMsg.PluginHelper
     private static final String openUIMethodName = "b";
 
-    private static HashSet<String> autoReceiveIds = new HashSet<>();
+    private static final HashSet<String> autoReceiveIds = new HashSet<>();
     private static WeakReference<Activity> launcherUiActivity;
 
     private static ToastHandler handler;
@@ -62,19 +62,7 @@ public class LuckyMoneyHook {
         delay = preferences.getInt("lucky_money_delay", 0);
         try {
             if (preferences.getBoolean("quick_open", false))
-                XposedHelpers.findAndHookMethod(luckyMoneyReceiveUI, mLpp.classLoader, receiveUIFunctionName, int.class, int.class, String.class, receiveUIParamName, new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        try {
-                            Button button = (Button) XposedHelpers.findFirstFieldByExactType(param.thisObject.getClass(), Button.class).get(param.thisObject);
-                            if (button.isShown() && button.isClickable()) {
-                                button.performClick();
-                            }
-                        } catch (Throwable e) {
-                            Log.e(LocationHook.TAG, e.toString());
-                        }
-                    }
-                });
+                hookLuckyMoneyReceiveUI(mLpp);
             if (preferences.getBoolean("auto_receive", false)) {
                 XposedHelpers.findAndHookMethod(WechatUnrecalledHook.SQLiteDatabaseClass, mLpp.classLoader, "insert", String.class, String.class, ContentValues.class, new XC_MethodHook() {
                     @Override
@@ -121,7 +109,7 @@ public class LuckyMoneyHook {
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         launcherUiActivity = new WeakReference<>((Activity) param.thisObject);
                         if (handler == null)
-                            handler = new ToastHandler(launcherUiActivity.get().getApplicationContext());
+                            handler = new ToastHandler(launcherUiActivity.get().getApplication());
                     }
                 });
             }
@@ -129,9 +117,35 @@ public class LuckyMoneyHook {
             XposedBridge.log(e);
         }
         if (preferences.getBoolean("recalled", false))
-            new WechatUnrecalledHook(WECHAT_PACKAGE_NAME).hook(mLpp.classLoader);
+            new WechatUnrecalledHook().hook(mLpp.classLoader);
         if (preferences.getBoolean("3_days_Moments", false))
             WechatUnrecalledHook.hook3DaysMoments(mLpp.classLoader);
+    }
+
+    private static void hookLuckyMoneyReceiveUI(XC_LoadPackage.LoadPackageParam mLpp) {
+        Method[] methods = XposedHelpers.findClass(luckyMoneyReceiveUI, mLpp.classLoader).getDeclaredMethods();
+        Method receiveUIMethod = null;
+        for (Method method : methods) {
+            if (receiveUIFunctionName.equals(method.getName())) {
+                receiveUIMethod = method;
+                break;
+            }
+        }
+        if (receiveUIMethod == null)
+            return;
+        XposedBridge.hookMethod(receiveUIMethod, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                try {
+                    Button button = (Button) XposedHelpers.findFirstFieldByExactType(param.thisObject.getClass(), Button.class).get(param.thisObject);
+                    if (button.isShown() && button.isClickable()) {
+                        button.performClick();
+                    }
+                } catch (Throwable e) {
+                    Log.e(LocationHook.TAG, e.toString());
+                }
+            }
+        });
     }
 
     private static void openLuckyMoneyReceiveUI(ContentValues contentValues, XC_LoadPackage.LoadPackageParam lpparam) {
@@ -187,9 +201,9 @@ public class LuckyMoneyHook {
 
     private static class ToastHandler extends Handler {
 
-        private Context context;
+        private final Application context;
 
-        ToastHandler(Context context) {
+        ToastHandler(Application context) {
             super(Looper.getMainLooper());
             this.context = context;
         }
