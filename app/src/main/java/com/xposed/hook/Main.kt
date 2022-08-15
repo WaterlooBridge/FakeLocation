@@ -6,9 +6,9 @@ import android.util.Log
 import com.xposed.hook.config.Constants
 import com.xposed.hook.config.PkgConfig
 import com.xposed.hook.location.LocationHook
-import com.xposed.hook.storage.XSharedPreferences
 import com.xposed.hook.wechat.LuckyMoneyHook
 import de.robv.android.xposed.IXposedHookLoadPackage
+import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam
 
@@ -24,7 +24,7 @@ class Main : IXposedHookLoadPackage {
             try {
                 val packageName = loadPackageParam.packageName
                 LuckyMoneyHook.hook(loadPackageParam)
-                val preferences = XSharedPreferences("com.xposed.hook", Constants.PREF_FILE_NAME)
+                val preferences = XSharedPreferences(BuildConfig.APPLICATION_ID, Constants.PREF_FILE_NAME)
                 if (!preferences.getBoolean(packageName, false))
                     return@post
                 var defaultLatitude = Constants.DEFAULT_LATITUDE

@@ -37,6 +37,7 @@ import com.xposed.hook.config.Constants
 import com.xposed.hook.config.PkgConfig
 import com.xposed.hook.entity.AppInfo
 import com.xposed.hook.theme.AppTheme
+import com.xposed.hook.utils.SharedPreferencesHelper
 
 class RimetActivity : AppCompatActivity() {
 
@@ -194,7 +195,8 @@ class RimetActivity : AppCompatActivity() {
                                 .putInt(prefix + "cid", parseInt(cid))
                                 .putLong(prefix + "time", System.currentTimeMillis())
                                 .putBoolean(appInfo.packageName, isChecked)
-                                .apply()
+                                .commit()
+                            SharedPreferencesHelper.makeWorldReadable(sp)
                             Toast.makeText(
                                 applicationContext,
                                 R.string.save_success,

@@ -12,6 +12,7 @@ import com.xposed.hook.config.Constants;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
 
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -36,7 +37,7 @@ public class LocationHook {
         hookMethod("android.net.wifi.WifiManager", mLpp.classLoader, "getScanResults", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                param.setResult(null);
+                param.setResult(Collections.emptyList());
             }
         });
 

@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.xposed.hook.theme.AppTheme
+import com.xposed.hook.utils.SharedPreferencesHelper
 import com.xposed.hook.wechat.LuckyMoneyHook
 
 /**
@@ -141,7 +142,8 @@ class LuckMoneySetting : AppCompatActivity() {
 
     private fun saveLuckyMoneyDelay() {
         try {
-            sp.edit().putInt("lucky_money_delay", luckyMoneyDelay.toInt()).apply()
+            sp.edit().putInt("lucky_money_delay", luckyMoneyDelay.toInt()).commit()
+            SharedPreferencesHelper.makeWorldReadable(sp)
         } catch (e: Exception) {
             e.printStackTrace()
         }

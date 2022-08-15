@@ -13,8 +13,8 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.xposed.hook.BuildConfig;
 import com.xposed.hook.location.LocationHook;
-import com.xposed.hook.storage.XSharedPreferences;
 import com.xposed.hook.utils.XmlToJson;
 
 import org.json.JSONObject;
@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -58,7 +59,7 @@ public class LuckyMoneyHook {
     public static void hook(final XC_LoadPackage.LoadPackageParam mLpp) {
         if (!WECHAT_PACKAGE_NAME.equals(mLpp.processName) || !WECHAT_PACKAGE_NAME.equals(mLpp.packageName))
             return;
-        XSharedPreferences preferences = new XSharedPreferences("com.xposed.hook", "lucky_money");
+        XSharedPreferences preferences = new XSharedPreferences(BuildConfig.APPLICATION_ID, "lucky_money");
         delay = preferences.getInt("lucky_money_delay", 0);
         try {
             if (preferences.getBoolean("quick_open", false))
