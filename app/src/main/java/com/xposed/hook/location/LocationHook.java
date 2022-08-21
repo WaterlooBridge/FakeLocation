@@ -31,8 +31,8 @@ public class LocationHook {
     public static void hookAndChange(XC_LoadPackage.LoadPackageParam mLpp, final double latitude, final double longitude, final int lac, final int cid) {
 
         Log.d(TAG, "Avalon Hook Location Test: " + mLpp.packageName);
-        LocationHandler.latitude = latitude;
-        LocationHandler.longitude = longitude;
+        LocationConfig.setLatitude(latitude);
+        LocationConfig.setLongitude(longitude);
 
         hookMethod("android.net.wifi.WifiManager", mLpp.classLoader, "getScanResults", new XC_MethodHook() {
             @Override
@@ -60,10 +60,10 @@ public class LocationHook {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 Location l = (Location) param.getResult();
                 if (l != null) {
-                    LocationHandler.updateLocation(l, latitude, longitude);
+                    LocationHandler.updateLocation(l, LocationConfig.getLatitude(), LocationConfig.getLongitude());
                     param.setResult(l);
                 } else
-                    param.setResult(LocationHandler.createLocation(latitude, longitude));
+                    param.setResult(LocationHandler.createLocation(LocationConfig.getLatitude(), LocationConfig.getLongitude()));
             }
         });
 
@@ -72,10 +72,10 @@ public class LocationHook {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 Location l = (Location) param.getResult();
                 if (l != null) {
-                    LocationHandler.updateLocation(l, latitude, longitude);
+                    LocationHandler.updateLocation(l, LocationConfig.getLatitude(), LocationConfig.getLongitude());
                     param.setResult(l);
                 } else
-                    param.setResult(LocationHandler.createLocation(latitude, longitude));
+                    param.setResult(LocationHandler.createLocation(LocationConfig.getLatitude(), LocationConfig.getLongitude()));
             }
         });
 
@@ -108,8 +108,18 @@ public class LocationHook {
             }
         });
 
-        hookMethod(Location.class, "getLatitude", XC_MethodReplacement.returnConstant(latitude));
-        hookMethod(Location.class, "getLongitude", XC_MethodReplacement.returnConstant(longitude));
+        hookMethod(Location.class, "getLatitude", new XC_MethodReplacement() {
+            @Override
+            protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
+                return LocationConfig.getLatitude();
+            }
+        });
+        hookMethod(Location.class, "getLongitude", new XC_MethodReplacement() {
+            @Override
+            protected Object replaceHookedMethod(MethodHookParam param) throws Throwable {
+                return LocationConfig.getLongitude();
+            }
+        });
         hookMethod(LocationManager.class, "getBestProvider", Criteria.class, boolean.class, XC_MethodReplacement.returnConstant("gps"));
         hookMethod(LocationManager.class, "isProviderEnabled", String.class, new XC_MethodHook() {
             @Override

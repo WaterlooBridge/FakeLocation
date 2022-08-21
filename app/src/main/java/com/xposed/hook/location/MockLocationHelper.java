@@ -25,10 +25,10 @@ public class MockLocationHelper {
             return;
         VirtualGPSSatalines satalines = VirtualGPSSatalines.get();
         String date = new SimpleDateFormat("HHmmss:SS", Locale.US).format(new Date());
-        String lat = getGPSLat(LocationHandler.latitude);
-        String lon = getGPSLat(LocationHandler.longitude);
-        String latNW = getNorthWest(LocationHandler.latitude);
-        String lonSE = getSouthEast(LocationHandler.longitude);
+        String lat = getGPSLat(LocationConfig.getLatitude());
+        String lon = getGPSLat(LocationConfig.getLongitude());
+        String latNW = getNorthWest(LocationConfig.getLatitude());
+        String lonSE = getSouthEast(LocationConfig.getLongitude());
         String $GPGGA = checksum(String.format("$GPGGA,%s,%s,%s,%s,%s,1,%s,692,.00,M,.00,M,,,", date, lat, latNW, lon, lonSE, satalines.getSvCount()));
         String $GPRMC = checksum(String.format("$GPRMC,%s,A,%s,%s,%s,%s,0,0,260717,,,A,", date, lat, latNW, lon, lonSE));
         callNmeaReceived(method, listener, "$GPGSV,1,1,04,12,05,159,36,15,41,087,15,19,38,262,30,31,56,146,19,*73");

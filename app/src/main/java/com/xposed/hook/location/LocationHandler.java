@@ -23,7 +23,6 @@ import mirror.RefMethod;
 public class LocationHandler extends Handler {
 
     private static LocationHandler instance;
-    public static double latitude, longitude;
 
     public static LocationHandler getInstance() {
         if (instance == null) {
@@ -92,7 +91,7 @@ public class LocationHandler extends Handler {
     private void notifyLocation(Map listeners) {
         if (listeners == null || listeners.isEmpty())
             return;
-        Location location = createLocation(latitude, longitude);
+        Location location = createLocation(LocationConfig.getLatitude(), LocationConfig.getLongitude());
         //noinspection unchecked
         Set<Map.Entry> entries = listeners.entrySet();
         RefMethod<Void> method;
