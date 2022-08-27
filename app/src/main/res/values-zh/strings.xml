@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">XposedHook</string>
 
+    <string name="search_app">搜索应用</string>
+
     <string name="gps_location">GPS定位</string>
     <string name="cell_location">基站定位（选填）</string>
     <string name="current_lac">当前位置基站信息 Lac:%1$s</string>
