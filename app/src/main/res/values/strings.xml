@@ -5,8 +5,8 @@
 
     <string name="gps_location">GPS Location</string>
     <string name="cell_location">Cell Location - Optional</string>
-    <string name="current_lac">Current Lac:%1$s</string>
-    <string name="current_cid">Current Cid:%1$s</string>
+    <string name="current_lac">Current Area Code:%1$s</string>
+    <string name="current_cid">Current Cell Identity:%1$s</string>
     <string name="current_latitude">Current Latitude:%1$s</string>
     <string name="current_longitude">Current Longitude:%1$s</string>
     <string name="auto_fill">Auto Fill</string>

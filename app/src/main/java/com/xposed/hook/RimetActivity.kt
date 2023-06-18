@@ -8,11 +8,10 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.telephony.CellLocation
-import android.telephony.PhoneStateListener
-import android.telephony.TelephonyManager
+import android.telephony.*
 import android.telephony.gsm.GsmCellLocation
 import android.widget.Toast
 import androidx.activity.compose.setContent
@@ -37,6 +36,7 @@ import com.xposed.hook.config.Constants
 import com.xposed.hook.config.PkgConfig
 import com.xposed.hook.entity.AppInfo
 import com.xposed.hook.theme.AppTheme
+import com.xposed.hook.utils.CellLocationHelper
 import com.xposed.hook.utils.SharedPreferencesHelper
 
 class RimetActivity : AppCompatActivity() {
@@ -82,12 +82,12 @@ class RimetActivity : AppCompatActivity() {
             mutableStateOf(sp.getString(prefix + "longitude", null) ?: defaultLongitude)
         }
         var lac by remember {
-            sp.getInt(prefix + "lac", Constants.DEFAULT_LAC).let {
+            CellLocationHelper.getLac(sp, prefix).let {
                 mutableStateOf(if (it == Constants.DEFAULT_LAC) "" else it.toString())
             }
         }
         var cid by remember {
-            sp.getInt(prefix + "cid", Constants.DEFAULT_CID).let {
+            CellLocationHelper.getCid(sp, prefix).let {
                 mutableStateOf(if (it == Constants.DEFAULT_CID) "" else it.toString())
             }
         }
@@ -148,14 +148,14 @@ class RimetActivity : AppCompatActivity() {
                 OutlinedTextField(
                     value = lac,
                     onValueChange = { lac = it },
-                    label = { Text(text = "lac") },
+                    label = { Text(text = "Area Code") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 OutlinedTextField(
                     value = cid,
                     onValueChange = { cid = it },
-                    label = { Text(text = "cid") },
+                    label = { Text(text = "Cell Identity") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
                 Spacer(modifier = Modifier.height(10.dp))
@@ -191,8 +191,8 @@ class RimetActivity : AppCompatActivity() {
                         onClick = {
                             sp.edit().putString(prefix + "latitude", latitude)
                                 .putString(prefix + "longitude", longitude)
-                                .putInt(prefix + "lac", parseInt(lac))
-                                .putInt(prefix + "cid", parseInt(cid))
+                                .putLong(prefix + "lac", parseLong(lac))
+                                .putLong(prefix + "cid", parseLong(cid))
                                 .putLong(prefix + "time", System.currentTimeMillis())
                                 .putBoolean(appInfo.packageName, isChecked)
                                 .commit()
@@ -233,9 +233,9 @@ class RimetActivity : AppCompatActivity() {
         }
     }
 
-    private fun parseInt(str: String): Int {
+    private fun parseLong(str: String): Long {
         return try {
-            str.toInt()
+            str.toLong()
         } catch (e: Exception) {
             -1
         }
@@ -248,10 +248,30 @@ class RimetActivity : AppCompatActivity() {
 
     private var listener: PhoneStateListener = object : PhoneStateListener() {
         override fun onCellLocationChanged(location: CellLocation) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) return
             if (location is GsmCellLocation) {
                 l = location
                 _currentLac.value = l.lac.toString()
                 _currentCid.value = l.cid.toString()
+            }
+        }
+
+        override fun onCellInfoChanged(cellInfo: MutableList<CellInfo>?) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) return
+            if (cellInfo == null || cellInfo.isEmpty()) return
+            when (val cellIdentity = cellInfo[0].cellIdentity) {
+                is CellIdentityGsm -> {
+                    _currentLac.value = cellIdentity.lac.toString()
+                    _currentCid.value = cellIdentity.cid.toString()
+                }
+                is CellIdentityLte -> {
+                    _currentLac.value = cellIdentity.tac.toString()
+                    _currentCid.value = cellIdentity.ci.toString()
+                }
+                is CellIdentityNr -> {
+                    _currentLac.value = cellIdentity.tac.toString()
+                    _currentCid.value = cellIdentity.nci.toString()
+                }
             }
         }
     }
@@ -297,7 +317,6 @@ class RimetActivity : AppCompatActivity() {
     }
 
     private fun startLocation() {
-        tm.listen(listener, PhoneStateListener.LISTEN_CELL_LOCATION)
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -310,6 +329,11 @@ class RimetActivity : AppCompatActivity() {
             return
         }
         lm.requestSingleUpdate(LocationManager.GPS_PROVIDER, gpsListener, null)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            tm.listen(listener, PhoneStateListener.LISTEN_CELL_LOCATION)
+        } else {
+            tm.listen(listener, PhoneStateListener.LISTEN_CELL_INFO)
+        }
     }
 
     private fun stopLocation() {

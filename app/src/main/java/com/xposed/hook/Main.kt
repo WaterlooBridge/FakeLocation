@@ -6,6 +6,7 @@ import android.util.Log
 import com.xposed.hook.config.Constants
 import com.xposed.hook.config.PkgConfig
 import com.xposed.hook.location.LocationHook
+import com.xposed.hook.utils.CellLocationHelper
 import com.xposed.hook.wechat.LuckyMoneyHook
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XSharedPreferences
@@ -46,8 +47,8 @@ class Main : IXposedHookLoadPackage {
                 } catch (e: NumberFormatException) {
                     e.printStackTrace()
                 }
-                val lac = preferences.getInt(prefix + "lac", Constants.DEFAULT_LAC)
-                val cid = preferences.getInt(prefix + "cid", Constants.DEFAULT_CID)
+                val lac = CellLocationHelper.getLac(preferences, prefix)
+                val cid = CellLocationHelper.getCid(preferences, prefix)
                 LocationHook.hookAndChange(loadPackageParam, latitude, longitude, lac, cid)
             } catch (e: Throwable) {
                 XposedBridge.log(e)
